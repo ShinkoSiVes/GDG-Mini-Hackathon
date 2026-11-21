@@ -127,3 +127,4 @@ Rehearsing on the live app from a clean browser caught three more issues, all fi
 - The schedule setup pre-filled two example classes, and a failed extraction silently inserted two fake classes. A plan could then be built on classes the user never entered. The list now starts empty and failures only show an error.
 - The replan dialog listed habits as "moved" when their times hadn't changed, and the summary claimed a move that didn't happen. It now lists only habits that moved, and says "Nothing needs to move" when none do.
 - A leftover non-English label on the pomodoro timer was translated.
+- Rehearsal on the live app also caught a replan bug: after confirming "friends hangout 5-8pm", coding appeared twice (once moved, once squeezed) and the squeezed session overlapped Duolingo. Fixed so a conflict habit is placed only by the user's choice, and a squeezed session uses the first genuinely free slot.

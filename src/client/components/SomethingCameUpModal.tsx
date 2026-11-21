@@ -98,7 +98,9 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
       }
 
       setDetectedEvent(data.detectedEvent);
-      setProposedBlocks(data.blocks || []);
+      // A habit raised as a conflict is decided by the user, so never also list it as moved
+      const conflictIds = new Set<string>((data.conflicts || []).map((c: ReplanConflict) => c.habitId));
+      setProposedBlocks((data.blocks || []).filter((b: { habitId: string }) => !conflictIds.has(b.habitId)));
       setConflicts(data.conflicts || []);
       setSummary(data.summary || 'Day replanned.');
 
@@ -159,6 +161,29 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
       }
     }
 
+    // Busy intervals (in minutes) so a squeezed session never overlaps anything
+    const toMins = (t: string) => {
+      const [h, m] = t.split(':').map(Number);
+      return h * 60 + m;
+    };
+    const toHHMM = (m: number) => {
+      const hh = Math.floor(m / 60);
+      const mm = m % 60;
+      return `${hh.toString().padStart(2, '0')}:${mm.toString().padStart(2, '0')}`;
+    };
+    const sleepMins = toMins(sleepTime);
+    const busy: Array<[number, number]> = [
+      ...fixedBlocks.map((f): [number, number] => [toMins(f.start), toMins(f.end)]),
+      [toMins(detectedEvent.start), toMins(detectedEvent.end)],
+      ...finalBlocks.map((b): [number, number] => [toMins(b.start), toMins(b.end)]),
+    ];
+    const findFreeSlot = (duration: number, from: number): number | null => {
+      for (let s = Math.ceil(from / 5) * 5; s + duration <= sleepMins; s += 5) {
+        if (!busy.some(([bs, be]) => s < be && bs < s + duration)) return s;
+      }
+      return null;
+    };
+
     // Apply conflict resolutions
     for (const c of conflicts) {
       const decision = conflictDecisions[c.habitId];
@@ -166,27 +191,24 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
       const habitDef = habits.find((h) => h.id === c.habitId);
 
       if (decision === 'squeeze' && orig && habitDef) {
-        // Squeeze into shorter session
+        // Squeeze into a shorter session in the first free slot: after the event, else any free time left today
         const squeezedMinutes = c.minMinutes || 15;
-        const [evEndH, evEndM] = detectedEvent.end.split(':').map(Number);
-        const startMins = evEndH * 60 + evEndM + 10;
-        const endMins = startMins + squeezedMinutes;
+        const startMins =
+          findFreeSlot(squeezedMinutes, toMins(detectedEvent.end) + 10) ??
+          findFreeSlot(squeezedMinutes, curTotal);
 
-        const toHHMM = (m: number) => {
-          const hh = Math.floor(m / 60);
-          const mm = m % 60;
-          return `${hh.toString().padStart(2, '0')}:${mm.toString().padStart(2, '0')}`;
-        };
-
-        finalBlocks.push({
-          ...orig,
-          start: toHHMM(startMins),
-          end: toHHMM(endMins),
-          isSqueezed: true,
-          target: habitDef.type === 'count' ? 1 : squeezedMinutes,
-          unit: habitDef.unit,
-          reason: `Squeezed to ${squeezedMinutes} min to fit tonight.`,
-        });
+        if (startMins !== null) {
+          busy.push([startMins, startMins + squeezedMinutes]);
+          finalBlocks.push({
+            ...orig,
+            start: toHHMM(startMins),
+            end: toHHMM(startMins + squeezedMinutes),
+            isSqueezed: true,
+            target: habitDef.type === 'count' ? 1 : squeezedMinutes,
+            unit: habitDef.unit,
+            reason: `Squeezed to ${squeezedMinutes} min to fit tonight.`,
+          });
+        }
       }
       // 'skip' or 'remove' means omitted from today's timeline
     }
