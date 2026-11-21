@@ -6,7 +6,7 @@
 Built for **DevFest Manila 2026 After Hours** (`#GeminiPromptMaxxing`) from one master prompt in
 Google Antigravity, and deployed on Google Cloud Run.
 
-- **Live app:** _pending deploy_
+- **Live app:** https://devfest-app-369130207380.asia-southeast1.run.app
 - **Demo video:** _pending_
 - **Master prompt and fix prompts:** [`PROMPT.md`](PROMPT.md)
 - **How it was built:** [`docs/PROCESS.md`](docs/PROCESS.md)

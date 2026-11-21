@@ -89,11 +89,13 @@ Follow-up fix prompts are logged at the bottom of `PROMPT.md`.
 
 ## 7. Deploy
 
-Pending: Cloud Run in `asia-southeast1`, deployed from Cloud Shell.
+Deployed 2026-11-22 to Cloud Run (`asia-southeast1`) from Cloud Shell, from commit `dafbc60`: https://devfest-app-369130207380.asia-southeast1.run.app
+
+Live checks: plan, replan and schedule extraction all answered by Gemini on Vertex AI (`gemini-3.5-flash-lite`, location `global`), and 6 of 6 classes were extracted from a typed schedule. The Event credits expire about 12 hours after activation, so after that only the fallback planner works.
 
 ## 8. Submission
 
-- Deployed link: pending
+- Deployed link: https://devfest-app-369130207380.asia-southeast1.run.app
 - YouTube video: pending
 - LinkedIn post: pending
 
