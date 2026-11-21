@@ -10,6 +10,7 @@ interface TimelineProps {
   habits: Habit[];
   plan: PlannedBlock[];
   isReshuffling: boolean;
+  isSampleData?: boolean;
   onUpdateProgress: (habitId: string, delta: number) => void;
   onToggleComplete: (habitId: string) => void;
 }
@@ -32,12 +33,13 @@ export const Timeline: React.FC<TimelineProps> = ({
   habits,
   plan,
   isReshuffling,
+  isSampleData,
   onUpdateProgress,
   onToggleComplete,
 }) => {
   // Merge all events into chronological sequence
   const items: TimelineItem[] = [
-    { type: 'wake', time: wakeTime },
+    { type: 'wake' as const, time: wakeTime },
     ...fixedBlocks.map((fb) => ({ type: 'fixed' as const, block: fb, time: fb.start })),
     ...plan.map((pb) => ({
       type: 'habit' as const,
@@ -45,7 +47,7 @@ export const Timeline: React.FC<TimelineProps> = ({
       habit: habits.find((h) => h.id === pb.habitId),
       time: pb.start,
     })),
-    { type: 'sleep', time: sleepTime },
+    { type: 'sleep' as const, time: sleepTime },
   ].sort((a, b) => timeToMins(a.time) - timeToMins(b.time));
 
   return (
@@ -66,7 +68,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                   <Sun className="w-4 h-4 fill-ink" />
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1 bg-paper-200 border border-paper-300 rounded-xl text-xs font-bold text-ink">
-                  <span className="font-mono">{item.time}</span>
+                  <span className="font-mono tabular-nums">{item.time}</span>
                   <span className="text-ink-muted font-normal">• Gising na! Simulan ang araw</span>
                 </div>
               </div>
@@ -80,7 +82,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                   <Moon className="w-4 h-4" />
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1 bg-paper-200 border border-paper-300 rounded-xl text-xs font-bold text-ink">
-                  <span className="font-mono">{item.time}</span>
+                  <span className="font-mono tabular-nums">{item.time}</span>
                   <span className="text-ink-muted font-normal">• Tulog time na (Pahinga para bukas)</span>
                 </div>
               </div>
@@ -93,8 +95,10 @@ export const Timeline: React.FC<TimelineProps> = ({
               <div key={item.block.id} className="flex items-start gap-4 z-10 ml-1">
                 {/* Timeline node */}
                 <div
-                  className={`w-6 h-6 rounded-full flex items-center justify-center border-2 border-ink shadow-sm mt-2 shrink-0 ${
-                    isSurprise ? 'bg-terracotta text-white' : 'bg-paper-300 text-ink'
+                  className={`w-6 h-6 rounded-full flex items-center justify-center border-2 shadow-sm mt-2 shrink-0 ${
+                    isSurprise
+                      ? 'bg-coral text-white border-coral'
+                      : 'bg-slate text-white border-slate'
                   }`}
                 >
                   {isSurprise ? (
@@ -106,24 +110,24 @@ export const Timeline: React.FC<TimelineProps> = ({
 
                 {/* Card */}
                 <div
-                  className={`flex-1 rounded-2xl p-3.5 border-2 border-ink ${
+                  className={`flex-1 rounded-2xl p-3.5 border-2 ${
                     isSurprise
-                      ? 'bg-terracotta-light/50 border-terracotta shadow-chunky-sm'
-                      : 'bg-paper-200/90 shadow-sm'
+                      ? 'bg-coral-light/60 border-coral shadow-chunky-coral'
+                      : 'bg-paper-50 border-slate/80 shadow-chunky-slate'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-lg bg-paper-300/80 text-ink">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-lg bg-paper-200 text-ink tabular-nums">
                       {item.block.start} – {item.block.end}
                     </span>
                     <span
                       className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
                         isSurprise
-                          ? 'bg-terracotta text-white'
-                          : 'bg-paper-300 text-ink-muted'
+                          ? 'bg-coral text-white'
+                          : 'bg-slate text-white'
                       }`}
                     >
-                      {isSurprise ? '⚡ Biglang Lakad' : 'Fixed Block / Klase'}
+                      {isSurprise ? '⚡ Biglang Lakad' : 'Klase / Commitment'}
                     </span>
                   </div>
                   <h4 className="font-bold text-sm text-ink">{item.block.title}</h4>
@@ -145,6 +149,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                   <HabitCard
                     block={item.block}
                     streak={item.habit?.streak || 1}
+                    isSampleData={isSampleData}
                     onUpdateProgress={onUpdateProgress}
                     onToggleComplete={onToggleComplete}
                   />

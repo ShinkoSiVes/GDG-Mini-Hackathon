@@ -115,7 +115,8 @@ export function getSampleDayState(): DayState {
     fixedBlocks: SAMPLE_FIXED_BLOCKS,
     habits: SAMPLE_HABITS,
     plan: SAMPLE_PLANNED_BLOCKS,
-    plannedBy: 'gemini',
+    plannedBy: 'sample',
     overallStreak: 14,
+    isSampleData: true,
   };
 }

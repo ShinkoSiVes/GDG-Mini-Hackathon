@@ -62,7 +62,7 @@ export interface PlanResult {
     why: string;
   }>;
   summary: string;
-  plannedBy: 'gemini' | 'fallback';
+  plannedBy: 'gemini' | 'fallback' | 'sample';
 }
 
 export interface DetectedEvent {
@@ -91,7 +91,7 @@ export interface ReplanResult {
   }>;
   conflicts: ReplanConflict[];
   summary: string;
-  plannedBy: 'gemini' | 'fallback';
+  plannedBy: 'gemini' | 'fallback' | 'sample';
 }
 
 export interface DayState {
@@ -103,6 +103,7 @@ export interface DayState {
   sleepTime: string;
   energyPeak: TimeOfDay;
   commitmentLevel: number;
-  plannedBy?: 'gemini' | 'fallback';
+  plannedBy?: 'gemini' | 'fallback' | 'sample';
   overallStreak: number;
+  isSampleData?: boolean;
 }

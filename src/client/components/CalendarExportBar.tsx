@@ -17,7 +17,7 @@ export const CalendarExportBar: React.FC<CalendarExportBarProps> = ({
       {/* Something came up button */}
       <button
         onClick={onOpenSomethingCameUp}
-        className="flex-1 py-3 px-4 bg-terracotta hover:bg-terracotta/90 text-white font-extrabold text-xs rounded-2xl border-2 border-ink shadow-chunky flex items-center justify-center gap-2 transition-transform active:translate-y-0.5"
+        className="flex-1 py-3 px-4 bg-coral hover:bg-coral-hover text-white font-extrabold text-xs rounded-2xl border-2 border-ink shadow-chunky flex items-center justify-center gap-2 transition-transform active:translate-y-0.5"
       >
         <Zap className="w-4 h-4 fill-white" />
         <span>⚡ May Biglang Lakad? (Something came up)</span>

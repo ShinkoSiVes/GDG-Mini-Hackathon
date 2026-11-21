@@ -10,7 +10,7 @@ export const Footer: React.FC = () => {
           <span>Paano ito gumagana?</span>
         </div>
         <p className="max-w-md text-[11px] leading-relaxed">
-          Binabasa ng <strong>Gemini 2.5 Flash</strong> sa Google Cloud ang iyong school schedule at
+          Binabasa ng <strong>Gemini 3.5 Flash-Lite</strong> sa Google Cloud ang iyong school schedule at
           hinahanap ang pinakamagandang libreng puwang para sa iyong mga daily habits—hindi sasabit
           sa klase o tulog, at agad na mag-aadjust kapag may biglang lakad ang barkada.
         </p>

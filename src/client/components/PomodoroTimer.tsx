@@ -74,7 +74,7 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
 
       {/* Timer display */}
       <div className="flex flex-col items-center justify-center my-2">
-        <div className="text-3xl font-extrabold font-mono text-ink tracking-tight">
+        <div className="text-3xl font-extrabold font-mono text-ink tracking-tight tabular-nums">
           {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
         </div>
         {/* Progress line */}

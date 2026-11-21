@@ -158,7 +158,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
               <div className="text-[11px] font-bold text-mango-dark uppercase tracking-wider">
                 Step 2 of 2: Quick Quiz
               </div>
-              <h2 className="text-lg font-extrabold text-ink">I-customize ang Singit Plan</h2>
+              <h2 className="font-display text-lg font-extrabold text-ink tracking-tight">I-customize ang Singit Plan</h2>
             </div>
           </div>
           <button

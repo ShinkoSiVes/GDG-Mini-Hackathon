@@ -72,6 +72,7 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
 
       const data = await res.json();
       if (data.fixedBlocks && data.fixedBlocks.length > 0) {
+        // Server already sorts today-first; keep the order
         setBlocks(data.fixedBlocks);
       } else if (data.fallbackBlocks) {
         setBlocks(data.fallbackBlocks);
@@ -116,7 +117,7 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
             <div className="text-[11px] font-bold text-mango-dark uppercase tracking-wider">
               Step 1 of 2: Schedule Input
             </div>
-            <h2 className="text-lg font-extrabold text-ink">I-set ang Klase o Fixed Blocks</h2>
+            <h2 className="font-display text-lg font-extrabold text-ink tracking-tight">I-set ang Klase o Fixed Blocks</h2>
           </div>
           <button
             onClick={onClose}
@@ -256,6 +257,9 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
                 key={b.id || i}
                 className="flex items-center gap-2 p-2 bg-paper-100 rounded-xl border border-paper-300"
               >
+                <span className="text-[10px] font-bold text-mango-dark w-9 shrink-0 truncate" title={b.day}>
+                  {b.day === 'Today' ? 'Today' : (b.day || 'Today').slice(0, 3)}
+                </span>
                 <input
                   type="text"
                   value={b.title}

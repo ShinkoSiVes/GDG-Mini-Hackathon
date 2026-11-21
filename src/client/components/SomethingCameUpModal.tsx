@@ -14,6 +14,7 @@ import { FixedBlock, Habit, PlannedBlock, ReplanConflict, DetectedEvent } from '
 
 interface SomethingCameUpModalProps {
   currentTime: string;
+  isSampleTime?: boolean;
   wakeTime: string;
   sleepTime: string;
   fixedBlocks: FixedBlock[];
@@ -29,6 +30,7 @@ interface SomethingCameUpModalProps {
 
 export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
   currentTime,
+  isSampleTime,
   wakeTime,
   sleepTime,
   fixedBlocks,
@@ -197,9 +199,15 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
               <AlertTriangle className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base font-extrabold text-ink">May Biglang Lakad?</h2>
+              <h2 className="font-display text-base font-extrabold text-ink tracking-tight">May Biglang Lakad?</h2>
               <p className="text-[11px] text-ink-muted">
-                I-replan ang natitirang oras mula {currentTime}
+                I-replan mula{' '}
+                <span className="font-mono font-bold text-ink">{currentTime}</span>{' '}
+                {isSampleTime ? (
+                  <span className="text-coral font-bold">(Sample Day 14:00 simulated)</span>
+                ) : (
+                  <span className="text-sage font-bold">(Real current time / Kasalukuyan)</span>
+                )}
               </p>
             </div>
           </div>
@@ -318,7 +326,7 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
                       >
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-ink">{habit?.title || 'Habit'}</span>
-                          <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                          <div className="flex items-center gap-1.5 font-mono tabular-nums text-[11px]">
                             {orig && (
                               <span className="text-ink-muted line-through">
                                 {orig.start}–{orig.end}

@@ -108,7 +108,9 @@ QA found these issues. Fix all of them, keep everything else unchanged, then run
 Do not modify README.md, PROMPT.md, AGENTS.md, docs/, or .agents/.
 ```
 
-### Fix prompt 2: after re-QA (2026-11-22, ~01:05)
+### Fix prompt 2: after re-QA (2026-11-22, ~01:05) — NOT SENT
+
+NOT SENT to Antigravity (credits nearly used up): the model change and the extraction hardening below were made directly in the code instead. The extraction "bug" turned out to be a test mistake (curl -F cut the text at the first semicolon); with a correct test, all classes were returned.
 
 Re-QA showed that `gemini-2.5-flash` returns 404 ("no longer available to new users"), which silently put every call into fallback mode. `gemini-3.5-flash-lite` works, and `gemini-3.8-flash` returned 503 high demand. Schedule extraction also still dropped classes.
 

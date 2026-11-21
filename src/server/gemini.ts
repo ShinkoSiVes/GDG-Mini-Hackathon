@@ -30,4 +30,4 @@ export function getGeminiClient(): GoogleGenAI {
 /**
  * Recommended Flash model with fallback default
  */
-export const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+export const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';

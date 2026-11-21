@@ -19,6 +19,7 @@ import { PomodoroTimer } from './PomodoroTimer.js';
 interface HabitCardProps {
   block: PlannedBlock;
   streak: number;
+  isSampleData?: boolean;
   onUpdateProgress: (habitId: string, delta: number) => void;
   onToggleComplete: (habitId: string) => void;
 }
@@ -26,6 +27,7 @@ interface HabitCardProps {
 export const HabitCard: React.FC<HabitCardProps> = ({
   block,
   streak,
+  isSampleData,
   onUpdateProgress,
   onToggleComplete,
 }) => {
@@ -67,7 +69,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
       {/* Top Header: Time slot + Streaks & Badges */}
       <div className="flex items-center justify-between gap-2 mb-2">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-xl bg-mango-light text-ink border border-mango">
+          <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-xl bg-mango-light text-ink border border-mango tabular-nums">
             {block.start} – {block.end}
           </span>
           {block.isSqueezed && (
@@ -80,10 +82,11 @@ export const HabitCard: React.FC<HabitCardProps> = ({
         <div className="flex items-center gap-1.5">
           <div
             className="flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-paper-200 border border-paper-300 text-ink"
-            title="Habit streak"
+            title={isSampleData ? "Sample habit streak" : "Habit streak"}
           >
-            <Flame className="w-3.5 h-3.5 text-terracotta fill-terracotta" />
-            <span>{streak}d</span>
+            <Flame className="w-3.5 h-3.5 text-coral fill-coral" />
+            <span className="tabular-nums">{streak}d</span>
+            {isSampleData && <span className="text-[9px] text-coral font-bold ml-0.5">(sample)</span>}
           </div>
 
           <a
@@ -104,7 +107,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
       <div className="flex items-start justify-between gap-3 my-1">
         <div>
           <h3
-            className={`font-bold text-base tracking-tight ${
+            className={`font-display font-bold text-base tracking-tight ${
               isComplete ? 'line-through text-ink-muted' : 'text-ink'
             }`}
           >
@@ -152,7 +155,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
         {block.type === 'count' && (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-ink">
+              <span className="text-xs font-bold text-ink tabular-nums">
                 {block.progress} / {block.target}
               </span>
               <span className="text-xs text-ink-muted">
@@ -180,7 +183,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-ink">
+                <span className="text-xs font-bold text-ink tabular-nums">
                   {block.progress} / {block.target}
                 </span>
                 <span className="text-xs text-ink-muted">

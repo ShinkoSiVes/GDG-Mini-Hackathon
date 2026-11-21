@@ -101,5 +101,12 @@ Pending: Cloud Run in `asia-southeast1`, deployed from Cloud Shell.
 
 - Typecheck clean. `trust proxy` and replan validation confirmed in the code and in 3 repeated replan runs.
 - **Mistake caught:** fix prompt 1 set the default model to `gemini-2.5-flash`, which the API rejects, so every call silently fell back to the planner. `gemini-3.5-flash-lite` works, and `gemini-3.8-flash` returned 503 high demand.
-- Schedule extraction still returned only 1 of 3 classes, so fix prompt 2 (see `PROMPT.md`) makes it robust in code.
+- Schedule extraction looked like it returned only 1 of 3 classes, but that was a test mistake (curl -F cut the text at the first semicolon). With a correct test it returned 6 of 6 and 4 of 4.
 - Still to verify: Vertex AI model availability in production, a real schedule screenshot, `.ics` import.
+
+## 6c. Direct fixes (2026-11-22, ~01:10)
+
+With Antigravity credits nearly used up, the remaining fixes were made directly in the code:
+- Default model set to `gemini-3.5-flash-lite` in code, footer, README and the deploy workflow.
+- Extraction hardened: text is split on `;` and newlines and extracted per entry in parallel, images get a second "what did I miss" pass, and partial failures keep the entries that worked.
+- Re-checked: typecheck and build clean; plan, replan and extraction all served by Gemini; the sample day shows a "Sample Day" badge and (sample) streaks; the Bricolage Grotesque heading font loads.

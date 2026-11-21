@@ -4,8 +4,8 @@
 
 @layer base {
   body {
-    background-color: #FAF8F5;
-    color: #121316;
+    background-color: #fdf0d5;
+    color: #183642;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 }
@@ -31,12 +31,12 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #FAF8F5;
+  background: #fdf0d5;
 }
 ::-webkit-scrollbar-thumb {
-  background: #D9D0C1;
+  background: #edd095;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #B88200;
+  background: #c9a518;
 }

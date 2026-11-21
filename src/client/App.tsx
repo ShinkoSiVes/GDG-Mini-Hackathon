@@ -198,8 +198,23 @@ export const App: React.FC = () => {
     }, 600);
   };
 
-  // Simulated current time for demo: 14:00 (afternoon)
-  const currentTime = '14:00';
+  // Replan starts from real current time in Asia/Manila, unless using the sample day demo (which uses 14:00)
+  const isSampleDay = dayState?.plannedBy === 'sample' || !!dayState?.isSampleData;
+  const getRealCurrentTime = () => {
+    try {
+      const now = new Date();
+      return new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Manila',
+        hour: '2-digit',
+        minute: '2-digit',
+        hourCycle: 'h23',
+      }).format(now);
+    } catch {
+      const d = new Date();
+      return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+    }
+  };
+  const currentTime = isSampleDay ? '14:00' : getRealCurrentTime();
 
   return (
     <div className="min-h-screen bg-paper-100 flex flex-col font-sans selection:bg-mango selection:text-ink">
@@ -207,6 +222,7 @@ export const App: React.FC = () => {
       <Header
         overallStreak={dayState?.overallStreak || 0}
         plannedBy={dayState?.plannedBy}
+        isSampleData={isSampleDay}
         onLoadSample={handleLoadSample}
         onOpenSetup={handleOpenSetup}
         onReset={handleReset}
@@ -231,6 +247,7 @@ export const App: React.FC = () => {
               habits={dayState.habits}
               plan={dayState.plan}
               isReshuffling={isReshuffling}
+              isSampleData={isSampleDay}
               onUpdateProgress={handleUpdateProgress}
               onToggleComplete={handleToggleComplete}
             />
@@ -246,7 +263,7 @@ export const App: React.FC = () => {
               <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-mango-light border border-mango text-ink uppercase tracking-wider">
                 DevFest Manila 2026
               </span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight mt-3">
+              <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-ink tracking-tight mt-3">
                 Kaya pang isingit ang habits mo ngayon.
               </h2>
               <p className="text-xs sm:text-sm text-ink-muted mt-2 leading-relaxed">
@@ -325,6 +342,7 @@ export const App: React.FC = () => {
       {showSomethingCameUp && dayState && (
         <SomethingCameUpModal
           currentTime={currentTime}
+          isSampleTime={isSampleDay}
           wakeTime={dayState.wakeTime}
           sleepTime={dayState.sleepTime}
           fixedBlocks={dayState.fixedBlocks}
