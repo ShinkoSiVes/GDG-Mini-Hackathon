@@ -161,6 +161,17 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
       }
     }
 
+    // Habits Gemini didn't mention are unchanged: keep them exactly as planned
+    const decidedIds = new Set<string>([
+      ...proposedBlocks.map((b) => b.habitId),
+      ...conflicts.map((c) => c.habitId),
+    ]);
+    for (const b of currentPlan) {
+      if (!decidedIds.has(b.habitId) && !finalBlocks.some((f) => f.habitId === b.habitId)) {
+        finalBlocks.push(b);
+      }
+    }
+
     // Busy intervals (in minutes) so a squeezed session never overlaps anything
     const toMins = (t: string) => {
       const [h, m] = t.split(':').map(Number);

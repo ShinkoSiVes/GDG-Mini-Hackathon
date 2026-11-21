@@ -129,3 +129,4 @@ Rehearsing on the live app from a clean browser caught three more issues, all fi
 - A leftover non-English label on the pomodoro timer was translated.
 - Rehearsal on the live app also caught a replan bug: after confirming "friends hangout 5-8pm", coding appeared twice (once moved, once squeezed) and the squeezed session overlapped Duolingo. Fixed so a conflict habit is placed only by the user's choice, and a squeezed session uses the first genuinely free slot.
 - Rehearsal also caught Gemini raising false conflicts (a morning habit flagged as "already passed" at 03:01 for an evening event). Added a server-side check so a conflict stands only when the habit's original slot overlaps the event. Verified locally with three repeated replans: no false conflicts.
+- Recording rehearsal caught a replan bug: after confirming, habits Gemini didn't mention (the morning chess puzzles) disappeared from the plan. Unmentioned habits are now kept as planned.
