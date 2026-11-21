@@ -165,12 +165,12 @@ export function deterministicFallbackPlan(
         habitId: habit.id,
         start: minutesToTime(slot.start),
         end: minutesToTime(slot.end),
-        reason: `Isiningit sa bakanteng oras (${habit.preferredTime} slot) nang hindi sumasabit sa klase.`,
+        reason: `Fits in a free ${habit.preferredTime} slot.`,
       });
     } else {
       unplaced.push({
         habitId: habit.id,
-        why: 'Walang sapat na bakanteng puwang sa pagitan ng mga fixed schedule at tulog.',
+        why: 'No free slot long enough.',
       });
     }
   }
@@ -178,7 +178,7 @@ export function deterministicFallbackPlan(
   return {
     blocks: placedBlocks,
     unplaced,
-    summary: 'Na-plano gamit ang maaasahang fallback schedule (walang overlap).',
+    summary: 'Planned with the fallback planner.',
     plannedBy: 'fallback',
   };
 }

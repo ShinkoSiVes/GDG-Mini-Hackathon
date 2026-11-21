@@ -56,15 +56,15 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
   >({});
 
   const samplePrompts = [
-    '🍻 Barkada hangout 7-10pm, inuman',
-    '📝 Surprise quiz bukas, kailangan mag-review 6-9pm',
-    '🚗 Heavy traffic sa EDSA, na-delay ng 1 hour (4-5pm)',
+    '🍻 Friends hangout 7–10pm, drinks',
+    '📝 Surprise quiz tomorrow, review 6–9pm',
+    '🚗 Heavy traffic, delayed 1 hour (4–5pm)',
   ];
 
   const handleReplan = async (promptToUse?: string) => {
     const text = promptToUse || eventText;
     if (!text.trim()) {
-      setErrorMsg('Pakisulat kung ano ang biglang lakad.');
+      setErrorMsg('Describe what came up.');
       return;
     }
 
@@ -88,13 +88,13 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'Hindi ma-replan ang araw.');
+        throw new Error(data.error || 'Replan failed. Try again.');
       }
 
       setDetectedEvent(data.detectedEvent);
       setProposedBlocks(data.blocks || []);
       setConflicts(data.conflicts || []);
-      setSummary(data.summary || 'Na-replan ang araw mo.');
+      setSummary(data.summary || 'Day replanned.');
 
       // Default conflict decisions to 'squeeze' if eligible, else 'skip'
       const initialDecisions: Record<string, 'squeeze' | 'skip' | 'remove'> = {};
@@ -106,7 +106,7 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
       setStage('preview');
     } catch (err: any) {
       console.error('Replan error:', err);
-      setErrorMsg(err.message || 'May problema sa koneksyon.');
+      setErrorMsg(err.message || 'Connection problem.');
     } finally {
       setIsReplanning(false);
     }
@@ -179,7 +179,7 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
           isSqueezed: true,
           target: habitDef.type === 'count' ? 1 : squeezedMinutes,
           unit: habitDef.unit,
-          reason: `Na-squeeze sa ${squeezedMinutes} mins para magkasya pa rin ngayong gabi.`,
+          reason: `Squeezed to ${squeezedMinutes} min to fit tonight.`,
         });
       }
       // 'skip' or 'remove' means omitted from today's timeline
@@ -199,14 +199,14 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
               <AlertTriangle className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="font-display text-base font-extrabold text-ink tracking-tight">May Biglang Lakad?</h2>
+              <h2 className="font-display text-base font-extrabold text-ink tracking-tight">Something came up?</h2>
               <p className="text-[11px] text-ink-muted">
-                I-replan mula{' '}
+                Replanning from{' '}
                 <span className="font-mono font-bold text-ink">{currentTime}</span>{' '}
                 {isSampleTime ? (
                   <span className="text-coral font-bold">(Sample Day 14:00 simulated)</span>
                 ) : (
-                  <span className="text-sage font-bold">(Real current time / Kasalukuyan)</span>
+                  <span className="text-sage font-bold">(current time)</span>
                 )}
               </p>
             </div>
@@ -222,12 +222,12 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
         {stage === 'input' ? (
           <div className="flex flex-col gap-4 my-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-ink">Ano ang biglang nangyari?</label>
+              <label className="text-xs font-bold text-ink">What happened?</label>
               <textarea
                 rows={3}
                 value={eventText}
                 onChange={(e) => setEventText(e.target.value)}
-                placeholder="Hal: barkada hangout 7–10pm, inuman o kaya surprise quiz bukas kailangan mag-review"
+                placeholder="e.g. friends hangout 7–10pm, or surprise quiz tomorrow"
                 className="w-full p-3 text-xs bg-paper-100 rounded-xl border border-paper-400 focus:border-ink focus:outline-none"
               />
             </div>
@@ -235,7 +235,7 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
             {/* Quick Prompts */}
             <div>
               <span className="text-[11px] font-bold text-ink-muted block mb-1.5">
-                Subukan ang mabilis na sample events:
+                Quick examples:
               </span>
               <div className="flex flex-col gap-1.5">
                 {samplePrompts.map((p, idx) => (
@@ -270,12 +270,12 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
                 {isReplanning ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Inaayos ng Gemini ang natitirang araw...</span>
+                    <span>Replanning...</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4" />
-                    <span>I-replan ang natitirang araw</span>
+                    <span>Replan my day</span>
                   </>
                 )}
               </button>
@@ -289,7 +289,7 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
               <div className="p-3 bg-terracotta-light/60 border border-terracotta rounded-2xl">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-terracotta">
-                    ⚡ Na-detect na Lakad:
+                    ⚡ Detected event:
                   </span>
                   <span className="font-mono text-xs font-bold text-ink">
                     {detectedEvent.start} – {detectedEvent.end}
@@ -313,7 +313,7 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
             {proposedBlocks.length > 0 && (
               <div>
                 <span className="text-xs font-bold text-ink block mb-2">
-                  Mga Nalipat na Habits ({proposedBlocks.length}):
+                  Moved habits ({proposedBlocks.length}):
                 </span>
                 <div className="flex flex-col gap-2">
                   {proposedBlocks.map((b) => {
@@ -351,7 +351,7 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
                 <div className="flex items-center gap-1.5 mb-2">
                   <AlertTriangle className="w-3.5 h-3.5 text-terracotta" />
                   <span className="text-xs font-bold text-ink">
-                    Sumikip ang oras para sa mga ito:
+                    No room for these:
                   </span>
                 </div>
                 <div className="flex flex-col gap-2.5">
@@ -406,7 +406,7 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
                           }`}
                         >
                           <Trash2 className="w-3 h-3" />
-                          <span>Tanggalin</span>
+                          <span>Remove</span>
                         </button>
                       </div>
                     </div>
@@ -421,14 +421,14 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
                 onClick={() => setStage('input')}
                 className="py-2.5 px-4 rounded-xl bg-paper-200 hover:bg-paper-300 text-xs font-semibold text-ink"
               >
-                Bumalik
+                Back
               </button>
               <button
                 onClick={handleConfirmAndApply}
                 className="flex-1 py-3 rounded-2xl bg-mango hover:bg-mango-hover text-ink font-extrabold text-xs border-2 border-ink shadow-chunky flex items-center justify-center gap-2 transition-transform active:translate-y-0.5"
               >
                 <Check className="w-4 h-4 stroke-[3]" />
-                <span>Kumpirmahin at I-apply ang Replan</span>
+                <span>Confirm replan</span>
               </button>
             </div>
           </div>

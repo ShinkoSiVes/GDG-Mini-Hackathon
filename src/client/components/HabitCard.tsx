@@ -74,27 +74,29 @@ export const HabitCard: React.FC<HabitCardProps> = ({
           </span>
           {block.isSqueezed && (
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-terracotta-light text-terracotta border border-terracotta">
-              Na-squeeze ({block.target} {block.unit || 'm'})
+              Squeezed ({block.target} {block.unit || 'm'})
             </span>
           )}
         </div>
 
         <div className="flex items-center gap-1.5">
-          <div
-            className="flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-paper-200 border border-paper-300 text-ink"
-            title={isSampleData ? "Sample habit streak" : "Habit streak"}
-          >
-            <Flame className="w-3.5 h-3.5 text-coral fill-coral" />
-            <span className="tabular-nums">{streak}d</span>
-            {isSampleData && <span className="text-[9px] text-coral font-bold ml-0.5">(sample)</span>}
-          </div>
+          {(streak > 0 || isSampleData) && (
+            <div
+              className="flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-paper-200 border border-paper-300 text-ink"
+              title={isSampleData ? "Sample habit streak" : "Habit streak"}
+            >
+              <Flame className="w-3.5 h-3.5 text-coral fill-coral" />
+              <span className="tabular-nums">{streak}d</span>
+              {isSampleData && <span className="text-[9px] text-coral font-bold ml-0.5">(sample)</span>}
+            </div>
+          )}
 
           <a
             href={gcalUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-lg bg-paper-100 hover:bg-paper-200 text-ink-muted hover:text-ink border border-paper-300 transition-colors"
-            title="I-add sa Google Calendar"
+            title="Add to Google Calendar"
           >
             <Calendar className="w-3 h-3 text-ink-muted" />
             <span className="hidden sm:inline">GCal</span>
@@ -126,7 +128,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
         {block.type === 'check' && (
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-ink-muted">
-              {isComplete ? '✨ Tapos na! Na-singit na.' : 'Tap kapag nagawa na:'}
+              {isComplete ? '✨ Done!' : 'Tap when done:'}
             </span>
             <button
               onClick={handleCheck}
@@ -201,7 +203,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
                 className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 bg-paper-200 hover:bg-paper-300 text-ink rounded-xl border border-ink shadow-chunky-sm transition-transform active:translate-y-0.5"
               >
                 <TimerIcon className="w-3.5 h-3.5 text-terracotta" />
-                <span>{showPomodoro ? 'Itago ang Timer' : 'Pomodoro (25/5)'}</span>
+                <span>{showPomodoro ? 'Hide timer' : 'Pomodoro (25/5)'}</span>
                 {showPomodoro ? (
                   <ChevronUp className="w-3 h-3 ml-0.5" />
                 ) : (

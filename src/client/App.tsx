@@ -49,7 +49,7 @@ export const App: React.FC = () => {
   };
 
   const handleReset = () => {
-    if (window.confirm('Gusto mo bang i-reset ang araw at simulan muli?')) {
+    if (window.confirm('Reset today and start over?')) {
       clearSavedState();
       setDayState(null);
     }
@@ -96,7 +96,7 @@ export const App: React.FC = () => {
       energyPeak: quiz.energyPeak,
       commitmentLevel: quiz.commitmentLevel,
       plannedBy: data.plannedBy || 'gemini',
-      overallStreak: (dayState?.overallStreak || 0) + 1,
+      overallStreak: dayState?.overallStreak || 0,
     };
 
     setDayState(newState);
@@ -233,7 +233,7 @@ export const App: React.FC = () => {
       <main className="flex-1 w-full max-w-xl mx-auto px-4 py-4">
         {dayState && dayState.plan.length > 0 ? (
           <div>
-            {/* Quick action bar: "May Biglang Lakad?" + "Send to Calendar" */}
+            {/* Quick action bar: "Something came up?" + "Send to Calendar" */}
             <CalendarExportBar
               plan={dayState.plan}
               onOpenSomethingCameUp={() => setShowSomethingCameUp(true)}
@@ -264,11 +264,10 @@ export const App: React.FC = () => {
                 DevFest Manila 2026
               </span>
               <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-ink tracking-tight mt-3">
-                Kaya pang isingit ang habits mo ngayon.
+                Fit your habits into your day.
               </h2>
               <p className="text-xs sm:text-sm text-ink-muted mt-2 leading-relaxed">
-                Hindi mo kailangan ng personal assistant para mag-chess, mag-code, o mag-Duolingo.
-                I-upload lang ang schedule mo, at hahanapan ito ng puwang ng Gemini.
+                Upload your class schedule. Gemini plans your habits around it.
               </p>
             </div>
 
@@ -280,7 +279,7 @@ export const App: React.FC = () => {
                 className="w-full py-3.5 px-4 rounded-2xl bg-mango hover:bg-mango-hover active:translate-y-0.5 text-ink font-extrabold text-sm border-2 border-ink shadow-chunky flex items-center justify-center gap-2 transition-all"
               >
                 <Sparkles className="w-4 h-4 fill-ink" />
-                <span>Subukan Agad: Load Sample Day</span>
+                <span>Try the sample day</span>
               </button>
 
               {/* Real Flow: Set up custom day */}
@@ -288,7 +287,7 @@ export const App: React.FC = () => {
                 onClick={handleOpenSetup}
                 className="w-full py-3 px-4 rounded-2xl bg-paper-50 hover:bg-white active:translate-y-0.5 text-ink font-bold text-xs border-2 border-ink shadow-chunky-sm flex items-center justify-center gap-2 transition-all"
               >
-                <span>I-upload ang sariling klase (Flow A)</span>
+                <span>Set up my own schedule</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -302,13 +301,13 @@ export const App: React.FC = () => {
               </div>
               <div className="p-3 bg-paper-50 rounded-2xl border border-paper-300">
                 <div className="text-base mb-1">⚡</div>
-                <div className="font-bold text-xs text-ink">Biglang Lakad</div>
+                <div className="font-bold text-xs text-ink">Something came up</div>
                 <div className="text-[10px] text-ink-muted">Replans rest of today</div>
               </div>
               <div className="p-3 bg-paper-50 rounded-2xl border border-paper-300">
                 <div className="text-base mb-1">📅</div>
                 <div className="font-bold text-xs text-ink">One-tap .ICS</div>
-                <div className="text-[10px] text-ink-muted">10-min alarms sa Google Cal</div>
+                <div className="text-[10px] text-ink-muted">10-min calendar alarms</div>
               </div>
             </div>
           </div>

@@ -14,7 +14,7 @@ Google Antigravity, and deployed on Google Cloud Run.
 ---
 
 ## ⚡ The Wow Moment (Under 10 Seconds)
-- **1-Tap Demo**: Tap **"Subukan Agad: Load Sample Day"** to immediately preview a realistic Filipino student schedule (CS 101, Math 53, Lab) with a ready-made plan, clearly labelled as a sample day, with no setup.
+- **1-Tap Demo**: Tap **"Try the sample day"** to immediately preview a realistic Filipino student schedule (CS 101, Math 53, Lab) with a ready-made plan, clearly labelled as a sample day, with no setup.
 - **10-Second Test**: Tap **"⚡ May Biglang Lakad?"** -> select *"🍻 Barkada hangout 7–10pm, inuman"* -> watch Gemini replan the day, moving focus habits earlier and offering to squeeze or skip conflicting habits!
 
 ---

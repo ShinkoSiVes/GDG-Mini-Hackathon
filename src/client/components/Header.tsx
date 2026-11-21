@@ -40,7 +40,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
               </div>
               <p className="text-xs text-ink-muted">
-                Isingit ang daily habits sa siksik mong araw
+                Fit habits into your day
               </p>
             </div>
           </div>
@@ -49,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Overall Streak */}
             <div
               className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-paper-200 border border-paper-300 shadow-sm whitespace-nowrap"
-              title={isSample ? 'Sample streak data for demo' : 'Araw-araw na streak mo'}
+              title={isSample ? 'Sample streak data for demo' : 'Your daily streak'}
             >
               <Flame className="w-4 h-4 text-coral fill-coral animate-pulse shrink-0" />
               <div className="text-xs font-bold text-ink">
@@ -68,7 +68,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center justify-between gap-1 sm:gap-2 pt-1">
           <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-ink-muted truncate min-w-0">
             <ShieldCheck className="w-3.5 h-3.5 text-sage shrink-0" />
-            <span className="truncate">Nasa device mo lang (localStorage)</span>
+            <span className="truncate">Saved on your device only</span>
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
@@ -76,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={onLoadSample}
                 className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 sm:px-3 py-1.5 bg-mango hover:bg-mango-hover active:translate-y-0.5 text-ink rounded-xl border border-ink shadow-chunky-sm transition-all whitespace-nowrap"
-                title="Subukan agad gamit ang sample UP/DLSU student schedule"
+                title="Try a sample student schedule"
               >
                 <Sparkles className="w-3.5 h-3.5 shrink-0" />
                 <span className="hidden sm:inline">Load Sample Day</span>
@@ -104,15 +104,15 @@ export const Header: React.FC<HeaderProps> = ({
                 <button
                   onClick={onOpenSetup}
                   className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 bg-paper-200 hover:bg-paper-300 text-ink rounded-lg border border-paper-300 transition-all"
-                  title="Mag-plano ng bagong araw"
+                  title="Plan a new day"
                 >
                   <PlusCircle className="w-3.5 h-3.5" />
-                  <span>Bago</span>
+                  <span>New</span>
                 </button>
                 <button
                   onClick={onReset}
                   className="p-1 text-ink-muted hover:text-ink hover:bg-paper-200 rounded-lg transition-colors"
-                  title="I-reset ang araw"
+                  title="Reset day"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                 </button>

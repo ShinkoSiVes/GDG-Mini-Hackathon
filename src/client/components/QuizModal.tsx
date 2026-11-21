@@ -44,7 +44,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
       estimatedMinutes: 15,
       progress: 0,
       completed: false,
-      streak: 3,
+      streak: 0,
     },
     {
       id: 'h-2',
@@ -56,7 +56,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
       estimatedMinutes: 50,
       progress: 0,
       completed: false,
-      streak: 5,
+      streak: 0,
     },
     {
       id: 'h-3',
@@ -68,7 +68,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
       estimatedMinutes: 15,
       progress: 0,
       completed: false,
-      streak: 12,
+      streak: 0,
     },
   ]);
 
@@ -77,7 +77,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
       ...habits,
       {
         id: `h-${Date.now()}`,
-        title: 'Bagong Habit',
+        title: 'New habit',
         type: 'check',
         target: 1,
         unit: 'session',
@@ -85,7 +85,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
         estimatedMinutes: 20,
         progress: 0,
         completed: false,
-        streak: 1,
+        streak: 0,
       },
     ]);
   };
@@ -102,7 +102,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
 
   const handlePlan = async () => {
     if (habits.length === 0) {
-      setErrorMsg('Maglagay ng kahit isang habit.');
+      setErrorMsg('Add at least one habit.');
       return;
     }
 
@@ -129,13 +129,13 @@ export const QuizModal: React.FC<QuizModalProps> = ({
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'Nabigo sa pag-plano.');
+        throw new Error(data.error || 'Planning failed.');
       }
 
       onPlanComplete(data, quiz);
     } catch (err: any) {
       console.error('Plan error:', err);
-      setErrorMsg(err.message || 'May problema sa koneksyon. Subukang muli.');
+      setErrorMsg(err.message || 'Connection problem. Try again.');
     } finally {
       setIsPlanning(false);
     }
@@ -150,7 +150,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
             <button
               onClick={onBack}
               className="p-1 rounded-lg hover:bg-paper-200 text-ink-muted hover:text-ink"
-              title="Bumalik sa Schedule"
+              title="Back to schedule"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
@@ -158,7 +158,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
               <div className="text-[11px] font-bold text-mango-dark uppercase tracking-wider">
                 Step 2 of 2: Quick Quiz
               </div>
-              <h2 className="font-display text-lg font-extrabold text-ink tracking-tight">I-customize ang Singit Plan</h2>
+              <h2 className="font-display text-lg font-extrabold text-ink tracking-tight">Customize your plan</h2>
             </div>
           </div>
           <button
@@ -174,11 +174,11 @@ export const QuizModal: React.FC<QuizModalProps> = ({
           <div className="p-3.5 bg-paper-100 rounded-2xl border border-paper-300">
             <label className="text-xs font-bold text-ink flex items-center gap-1.5 mb-2">
               <Clock className="w-4 h-4 text-mango-dark" />
-              <span>1. Oras ng Gising at Tulog</span>
+              <span>1. Wake and sleep times</span>
             </label>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <span className="text-[11px] text-ink-muted block mb-1">Gising:</span>
+                <span className="text-[11px] text-ink-muted block mb-1">Wake:</span>
                 <input
                   type="time"
                   value={wakeTime}
@@ -187,7 +187,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
                 />
               </div>
               <div>
-                <span className="text-[11px] text-ink-muted block mb-1">Tulog:</span>
+                <span className="text-[11px] text-ink-muted block mb-1">Sleep:</span>
                 <input
                   type="time"
                   value={sleepTime}
@@ -203,14 +203,14 @@ export const QuizModal: React.FC<QuizModalProps> = ({
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-bold text-ink flex items-center gap-1.5">
                 <CheckCircle className="w-4 h-4 text-sage" />
-                <span>2 & 3. Mga Habits, Target Type, at Preferred Time</span>
+                <span>2. Habits, targets, preferred time</span>
               </label>
               <button
                 onClick={addHabit}
                 className="inline-flex items-center gap-1 text-[11px] font-bold text-ink hover:text-mango-dark"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Magdagdag</span>
+                <span>Add</span>
               </button>
             </div>
 
@@ -225,7 +225,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
                       type="text"
                       value={h.title}
                       onChange={(e) => updateHabit(i, { title: e.target.value })}
-                      placeholder="Pangalan ng habit"
+                      placeholder="Habit name"
                       className="flex-1 text-xs font-bold bg-transparent border-b border-paper-200 focus:border-ink focus:outline-none"
                     />
                     <button
@@ -299,15 +299,15 @@ export const QuizModal: React.FC<QuizModalProps> = ({
           <div className="p-3.5 bg-paper-100 rounded-2xl border border-paper-300">
             <label className="text-xs font-bold text-ink flex items-center gap-1.5 mb-2">
               <Zap className="w-4 h-4 text-mango" />
-              <span>4. Kailan pinakamataas ang energy mo?</span>
+              <span>3. When is your energy highest?</span>
             </label>
             <div className="grid grid-cols-4 gap-2">
               {(
                 [
-                  { id: 'morning', label: 'Umaga', icon: '🌅' },
-                  { id: 'afternoon', label: 'Hapon', icon: '☀️' },
-                  { id: 'evening', label: 'Gabi', icon: '🌆' },
-                  { id: 'night', label: 'Hatinggabi', icon: '🌙' },
+                  { id: 'morning', label: 'Morning', icon: '🌅' },
+                  { id: 'afternoon', label: 'Afternoon', icon: '☀️' },
+                  { id: 'evening', label: 'Evening', icon: '🌆' },
+                  { id: 'night', label: 'Night', icon: '🌙' },
                 ] as const
               ).map((p) => (
                 <button
@@ -331,12 +331,12 @@ export const QuizModal: React.FC<QuizModalProps> = ({
             <div className="flex items-center justify-between mb-1">
               <label className="text-xs font-bold text-ink flex items-center gap-1.5">
                 <Shield className="w-4 h-4 text-terracotta" />
-                <span>5. Commitment Level (1–5)</span>
+                <span>4. Commitment level (1–5)</span>
               </label>
               <span className="text-xs font-bold text-ink font-mono">{commitmentLevel} / 5</span>
             </div>
             <p className="text-[11px] text-ink-muted mb-2">
-              Gaano kahirap ipaglaban ang habit kapag sumisikip ang araw?
+              How strongly should habits be protected when time is tight?
             </p>
             <div className="flex items-center gap-2">
               {[1, 2, 3, 4, 5].map((lvl) => (
@@ -354,9 +354,9 @@ export const QuizModal: React.FC<QuizModalProps> = ({
               ))}
             </div>
             <div className="flex justify-between text-[10px] text-ink-muted mt-1 px-1">
-              <span>Chill lang (Move/Drop)</span>
-              <span>Balanse</span>
-              <span>Protektahan todo</span>
+              <span>Flexible</span>
+              <span>Balanced</span>
+              <span>Protect all</span>
             </div>
           </div>
         </div>
@@ -377,12 +377,12 @@ export const QuizModal: React.FC<QuizModalProps> = ({
             {isPlanning ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Isinisingit ng Gemini sa free slots mo...</span>
+                <span>Planning your day...</span>
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4" />
-                <span>✨ Isingit na ang Habits Gamit ang Gemini!</span>
+                <span>✨ Plan my day</span>
               </>
             )}
           </button>

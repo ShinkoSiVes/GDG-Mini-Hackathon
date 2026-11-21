@@ -9,6 +9,6 @@ export const apiRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: {
-    error: 'Dahan-dahan lang po! Masyadong maraming requests. Please wait a few minutes before trying again.',
+    error: 'Too many requests. Please wait a few minutes and try again.',
   },
 });

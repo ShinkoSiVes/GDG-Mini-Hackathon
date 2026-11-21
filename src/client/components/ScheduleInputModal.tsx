@@ -34,7 +34,7 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
     const selected = e.target.files?.[0];
     if (selected) {
       if (selected.size > 5 * 1024 * 1024) {
-        setErrorMsg('Masyadong malaki ang image (maximum 5 MB).');
+        setErrorMsg('Image too large (max 5 MB).');
         return;
       }
       setFile(selected);
@@ -74,12 +74,14 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
       if (data.fixedBlocks && data.fixedBlocks.length > 0) {
         // Server already sorts today-first; keep the order
         setBlocks(data.fixedBlocks);
+        if (data.notes && /read/i.test(data.notes)) setErrorMsg(data.notes);
       } else if (data.fallbackBlocks) {
         setBlocks(data.fallbackBlocks);
+        setErrorMsg(data.error || 'Could not read the schedule. Edit the table below.');
       }
     } catch (err: any) {
       console.error('Extract error:', err);
-      setErrorMsg('Hindi ma-konekta sa server. Maaari mong i-edit ang table nang direkta.');
+      setErrorMsg('Cannot reach the server. Edit the table directly.');
     } finally {
       setIsExtracting(false);
     }
@@ -99,7 +101,7 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
         day: 'Today',
         start: '15:00',
         end: '16:00',
-        title: 'Bagong Klase / Lab',
+        title: 'New class',
       },
     ]);
   };
@@ -117,7 +119,7 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
             <div className="text-[11px] font-bold text-mango-dark uppercase tracking-wider">
               Step 1 of 2: Schedule Input
             </div>
-            <h2 className="font-display text-lg font-extrabold text-ink tracking-tight">I-set ang Klase o Fixed Blocks</h2>
+            <h2 className="font-display text-lg font-extrabold text-ink tracking-tight">Your classes</h2>
           </div>
           <button
             onClick={onClose}
@@ -145,7 +147,7 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
             }`}
           >
             <FileText className="w-3.5 h-3.5" />
-            <span>I-type bilang Text</span>
+            <span>Type it in</span>
           </button>
         </div>
 
@@ -170,15 +172,15 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
                     alt="Schedule preview"
                     className="max-h-36 rounded-lg object-contain border border-paper-300"
                   />
-                  <span className="text-xs text-ink-muted underline">Palitan ang image</span>
+                  <span className="text-xs text-ink-muted underline">Change image</span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center gap-1.5 py-4">
                   <Upload className="w-8 h-8 text-mango-dark" />
                   <span className="text-xs font-bold text-ink">
-                    I-upload ang screenshot ng school portal o Form 5
+                    Upload a screenshot of your schedule
                   </span>
-                  <span className="text-[11px] text-ink-muted">PNG, JPG, WebP hanggang 5MB</span>
+                  <span className="text-[11px] text-ink-muted">PNG, JPG or WebP, up to 5 MB</span>
                 </div>
               )}
             </div>
@@ -191,12 +193,12 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
               {isExtracting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Binabasa ng Gemini ang schedule...</span>
+                  <span>Reading schedule...</span>
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  <span>Basahin gamit ang Gemini</span>
+                  <span>Read with Gemini</span>
                 </>
               )}
             </button>
@@ -207,7 +209,7 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
               rows={3}
               value={textSchedule}
               onChange={(e) => setTextSchedule(e.target.value)}
-              placeholder="Halimbawa: CS 101 Lecture MWF 8:30-10:00am, Math 53 TTH 1:00-2:30pm"
+              placeholder="Example: CS 101 Lecture MWF 8:30-10:00am, Math 53 TTH 1:00-2:30pm"
               className="w-full p-3 text-xs bg-paper-100 rounded-xl border border-paper-400 focus:border-ink focus:outline-none"
             />
             <button
@@ -218,12 +220,12 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
               {isExtracting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Binabasa ng Gemini...</span>
+                  <span>Reading...</span>
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  <span>I-extract ang Schedule</span>
+                  <span>Extract schedule</span>
                 </>
               )}
             </button>
@@ -240,14 +242,14 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
         <div className="mt-5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-ink">
-              Mga Klase / Fixed Blocks ({blocks.length}):
+              Classes ({blocks.length}):
             </span>
             <button
               onClick={addBlock}
               className="inline-flex items-center gap-1 text-[11px] font-bold text-ink hover:text-mango-dark"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Magdagdag</span>
+              <span>Add</span>
             </button>
           </div>
 
@@ -283,7 +285,7 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
                 <button
                   onClick={() => removeBlock(i)}
                   className="p-1 text-ink-muted hover:text-terracotta"
-                  title="Tanggalin"
+                  title="Remove"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -298,7 +300,7 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
             onClick={() => onContinue(blocks)}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-ink text-white hover:bg-ink-muted font-bold text-xs shadow-chunky-sm transition-all"
           >
-            <span>Ituloy sa Quiz (Habits & Energy)</span>
+            <span>Continue</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

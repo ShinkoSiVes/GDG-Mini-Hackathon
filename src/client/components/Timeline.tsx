@@ -69,7 +69,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1 bg-paper-200 border border-paper-300 rounded-xl text-xs font-bold text-ink">
                   <span className="font-mono tabular-nums">{item.time}</span>
-                  <span className="text-ink-muted font-normal">• Gising na! Simulan ang araw</span>
+                  <span className="text-ink-muted font-normal">• Wake up</span>
                 </div>
               </div>
             );
@@ -83,7 +83,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1 bg-paper-200 border border-paper-300 rounded-xl text-xs font-bold text-ink">
                   <span className="font-mono tabular-nums">{item.time}</span>
-                  <span className="text-ink-muted font-normal">• Tulog time na (Pahinga para bukas)</span>
+                  <span className="text-ink-muted font-normal">• Bedtime</span>
                 </div>
               </div>
             );
@@ -127,7 +127,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                           : 'bg-slate text-white'
                       }`}
                     >
-                      {isSurprise ? '⚡ Biglang Lakad' : 'Klase / Commitment'}
+                      {isSurprise ? '⚡ Event' : 'Class'}
                     </span>
                   </div>
                   <h4 className="font-bold text-sm text-ink">{item.block.title}</h4>
@@ -148,7 +148,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                 <div className="flex-1">
                   <HabitCard
                     block={item.block}
-                    streak={item.habit?.streak || 1}
+                    streak={item.habit?.streak ?? 0}
                     isSampleData={isSampleData}
                     onUpdateProgress={onUpdateProgress}
                     onToggleComplete={onToggleComplete}

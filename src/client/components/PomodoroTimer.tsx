@@ -99,12 +99,12 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
           {isRunning ? (
             <>
               <Pause className="w-3.5 h-3.5" />
-              <span>I-pause</span>
+              <span>Pause</span>
             </>
           ) : (
             <>
               <Play className="w-3.5 h-3.5 fill-ink" />
-              <span>Simulan</span>
+              <span>Start</span>
             </>
           )}
         </button>
@@ -112,7 +112,7 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
         <button
           onClick={resetTimer}
           className="p-2 bg-paper-200 hover:bg-paper-300 text-ink rounded-xl border border-ink shadow-chunky-sm"
-          title="I-reset ang timer"
+          title="Reset timer"
         >
           <RotateCcw className="w-3.5 h-3.5" />
         </button>
@@ -123,7 +123,7 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
             confetti({ particleCount: 40, spread: 60 });
           }}
           className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-2 bg-sage-light hover:bg-sage text-sage hover:text-white rounded-xl border border-sage transition-colors"
-          title="I-log agad ang 25 minuto kung natapos na"
+          title="Log 25 minutes now"
         >
           <Check className="w-3.5 h-3.5" />
           <span>+25m Log</span>

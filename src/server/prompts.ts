@@ -43,7 +43,7 @@ export const PLAN_SCHEMA: Schema = {
           habitId: { type: Type.STRING, description: "Exact ID of the habit being placed" },
           start: { type: Type.STRING, description: "Start time in 24hr HH:mm format on 5-min grid" },
           end: { type: Type.STRING, description: "End time in 24hr HH:mm format on 5-min grid" },
-          reason: { type: Type.STRING, description: "Punchy 1-line reason in warm Taglish why placed here" },
+          reason: { type: Type.STRING, description: "Direct reason in plain English, 12 words or fewer" },
         },
         required: ["habitId", "start", "end", "reason"],
       },
@@ -62,7 +62,7 @@ export const PLAN_SCHEMA: Schema = {
     },
     summary: {
       type: Type.STRING,
-      description: "Warm, encouraging 1-sentence summary of today's plan in light Taglish",
+      description: "One short, direct sentence summarizing today's plan, plain English",
     },
   },
   required: ["blocks", "unplaced", "summary"],
@@ -121,7 +121,7 @@ export const REPLAN_SCHEMA: Schema = {
     },
     summary: {
       type: Type.STRING,
-      description: "Actionable summary of how the day was reorganized in light Taglish",
+      description: "One short, direct sentence on how the day was reorganized, plain English",
     },
   },
   required: ["detectedEvent", "blocks", "conflicts", "summary"],

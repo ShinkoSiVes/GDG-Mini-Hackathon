@@ -40,7 +40,7 @@ export function generateICS(blocks: PlannedBlock[], dateStr: string = getTodayDa
       'BEGIN:VALARM',
       'TRIGGER:-PT10M',
       'ACTION:DISPLAY',
-      'DESCRIPTION:Paalala: Oras na para sa iyong Singit habit sa 10 minuto!',
+      'DESCRIPTION:Singit habit starts in 10 minutes.',
       'END:VALARM',
       'END:VEVENT',
     ].join('\r\n');

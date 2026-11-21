@@ -20,7 +20,7 @@ export const CalendarExportBar: React.FC<CalendarExportBarProps> = ({
         className="flex-1 py-3 px-4 bg-coral hover:bg-coral-hover text-white font-extrabold text-xs rounded-2xl border-2 border-ink shadow-chunky flex items-center justify-center gap-2 transition-transform active:translate-y-0.5"
       >
         <Zap className="w-4 h-4 fill-white" />
-        <span>⚡ May Biglang Lakad? (Something came up)</span>
+        <span>⚡ Something came up?</span>
       </button>
 
       {/* Send to calendar */}
@@ -28,7 +28,7 @@ export const CalendarExportBar: React.FC<CalendarExportBarProps> = ({
         onClick={() => downloadICS(plan)}
         disabled={plan.length === 0}
         className="py-3 px-4 bg-paper-50 hover:bg-white text-ink font-bold text-xs rounded-2xl border-2 border-ink shadow-chunky flex items-center justify-center gap-2 transition-transform active:translate-y-0.5"
-        title="I-export ang .ics file na may 10-minute alarms (Asia/Manila)"
+        title="Export .ics with 10-minute alarms"
       >
         <Calendar className="w-4 h-4 text-mango-dark" />
         <span>Send to Calendar (.ics)</span>

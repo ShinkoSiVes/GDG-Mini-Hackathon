@@ -123,3 +123,12 @@ Fix prompt 2 (from re-QA):
    c. If any entry fails, keep the entries that worked and show which one failed in the editable table instead of dropping everything.
 3. Do not modify README.md, PROMPT.md, AGENTS.md, docs/, or .agents/. Run typecheck and build when done, but do not start servers or run your own QA.
 ```
+
+### Follow-up 3: plain English and shorter copy (2026-11-22, ~02:25)
+
+The master prompt asked for light Taglish microcopy. After reviewing the demo, the copy was changed to plain English with fewer words, and applied directly in the code. The product behaviour and the two flows are unchanged. Changes:
+
+- All UI text, error messages and fallback reasons are plain English. Labels are shorter ("Fit your habits into your day.", "Plan my day", "Something came up?", "Replan my day").
+- Gemini's reasons and summaries are instructed to be short, direct English (12 words or fewer for habit reasons).
+- Streaks start at 0 for a new user. The old defaults (3, 5 and 12 days) and the automatic "+1" when a plan is created were removed. A habit's streak badge is hidden until it is above 0, and the sample day's streaks are marked "(sample)".
+- Temporary Gemini errors (503 high demand, 429) are retried twice with a short wait before the app falls back. A schedule entry that still can't be read is named in the UI instead of silently dropped.

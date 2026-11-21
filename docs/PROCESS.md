@@ -112,3 +112,11 @@ With Antigravity credits nearly used up, the remaining fixes were made directly 
 - Default model set to `gemini-3.5-flash-lite` in code, footer, README and the deploy workflow.
 - Extraction hardened: text is split on `;` and newlines and extracted per entry in parallel, images get a second "what did I miss" pass, and partial failures keep the entries that worked.
 - Re-checked: typecheck and build clean; plan, replan and extraction all served by Gemini; the sample day shows a "Sample Day" badge and (sample) streaks; the Bricolage Grotesque heading font loads.
+
+## 6d. English copy, streak fix and retries (2026-11-22, ~02:30)
+
+- Replaced the Taglish copy with short, plain English across the UI, error messages, planner reasons and Gemini's instructions (logged in `PROMPT.md` as follow-up 3).
+- QA on a clean browser (no saved data) caught: new users started with a "1d" streak and the habits carried default streaks of 3, 5 and 12 days. Streaks now start at 0.
+- QA caught a temporary Gemini 503 ("high demand") dropping a class during extraction. Added retries for temporary errors, and the UI now names any entry it couldn't read.
+- A parallel stress test of 15 extraction calls hit the 429 quota on the free local API key. That is a local-key limit, not an app bug. The deployed app uses Vertex AI.
+- Typecheck and build clean. Plan, replan and extraction verified in plain English; Flow A, the quiz and the replan dialog verified in the browser.

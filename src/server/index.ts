@@ -3,7 +3,7 @@ import cors from 'cors';
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { getGeminiClient, GEMINI_MODEL } from './gemini.js';
+import { getGeminiClient, GEMINI_MODEL, generateWithRetry } from './gemini.js';
 import {
   SCHEDULE_EXTRACTION_SCHEMA,
   PLAN_SCHEMA,
@@ -58,7 +58,7 @@ app.post('/api/schedule/extract', upload.single('scheduleImage'), async (req: Re
 
     if (!file && (!textSchedule || typeof textSchedule !== 'string' || !textSchedule.trim())) {
       return res.status(400).json({
-        error: 'Mag-upload ng schedule image o mag-type ng text schedule.',
+        error: 'Upload a schedule image or type your schedule.',
       });
     }
 
@@ -94,7 +94,7 @@ CRITICAL RULES:
 
     // One Gemini call that returns the raw fixedBlocks array
     const runExtraction = async (parts: any[]): Promise<any[]> => {
-      const response = await ai.models.generateContent({
+      const response = await generateWithRetry(ai, {
         model: GEMINI_MODEL,
         contents: parts,
         config: {
@@ -178,7 +178,7 @@ CRITICAL RULES:
       }
       found = mergeBlocks(lists);
       if (failedEntries.length > 0) {
-        extractNote = `Hindi nabasa ang: ${failedEntries.join(' | ')}. Pakidagdag nang mano-mano.`;
+        extractNote = `Couldn't read: ${failedEntries.join(' | ')}. Please add manually.`;
       }
     }
 
@@ -250,7 +250,7 @@ CRITICAL RULES:
   } catch (error: any) {
     console.error('Schedule extraction error:', error?.message || error);
     return res.status(500).json({
-      error: 'Hindi mabasa ang schedule sa ngayon. Maaari mong i-type o i-edit nang mano-mano ang mga klase.',
+      error: 'Could not read the schedule. Type or edit your classes manually.',
       fallbackBlocks: [
         { id: `fb-1`, day: 'Today', start: '08:30', end: '10:00', title: 'CS 101 Lecture' },
         { id: `fb-2`, day: 'Today', start: '13:00', end: '15:00', title: 'Math 53 Discussion' },
@@ -273,7 +273,7 @@ app.post('/api/plan', async (req: Request, res: Response) => {
   }: QuizAnswers & { fixedBlocks: FixedBlock[] } = req.body;
 
   if (!habits || habits.length === 0) {
-    return res.status(400).json({ error: 'Walang habits na na-set.' });
+    return res.status(400).json({ error: 'Add at least one habit.' });
   }
 
   // Attempt 1 with Gemini
@@ -301,11 +301,11 @@ STRICT RULES:
 2. NO block may overlap any fixed class or another habit block.
 3. Every start and end time must be in 24hr HH:mm format on a 5-minute grid (minutes end in 0 or 5).
 4. Respect preferred time of day (morning, afternoon, evening, night) and energy peak where possible.
-5. Provide a warm, punchy 1-line reason in conversational Taglish for each habit placement (e.g., "Isiningit bago mag-lunch habang alert pa", "Pang-relax pagkatapos ng klase").
+5. Provide a warm, punchy 1-line reason in plain, direct English for each habit placement, 12 words or fewer (e.g., "Before lunch, while you're still sharp", "Easy wind-down after class").
 6. If any habit truly cannot fit, place it in "unplaced" with a clear reason.
     `.trim();
 
-    let response = await ai.models.generateContent({
+    let response = await generateWithRetry(ai, {
       model: GEMINI_MODEL,
       contents: [{ text: planPrompt }],
       config: {
@@ -333,7 +333,7 @@ Rules reminder:
 - Strict 5-minute grid
       `.trim();
 
-      response = await ai.models.generateContent({
+      response = await generateWithRetry(ai, {
         model: GEMINI_MODEL,
         contents: [{ text: planPrompt }, { text: retryPrompt }],
         config: {
@@ -352,7 +352,7 @@ Rules reminder:
       return res.json({
         blocks: parsed.blocks,
         unplaced: parsed.unplaced || [],
-        summary: parsed.summary || 'Na-singit na ang habits mo ngayon!',
+        summary: parsed.summary || 'Your habits are planned for today.',
         plannedBy: 'gemini',
       });
     }
@@ -390,7 +390,7 @@ app.post('/api/replan', async (req: Request, res: Response) => {
   } = req.body;
 
   if (!eventText || !eventText.trim()) {
-    return res.status(400).json({ error: 'Pakisulat kung ano ang biglang lakad.' });
+    return res.status(400).json({ error: 'Describe what came up.' });
   }
 
   const isSocialNight = /inuman|hangout|barkada|inom|party|gala|drinks|drinking/i.test(eventText);
@@ -418,7 +418,7 @@ ${JSON.stringify(currentPlan, null, 2)}
 MISSION:
 1. Parse the surprise event: title, start time, end time, and event type (social, study, errand, other).
 2. The event type MUST matter:
-   - "social / drinks / inuman / hangout / barkada" at night: timer (focus/study) habits MUST be placed BEFORE the event start time — NEVER after the event ends, because the student cannot focus after a social/drinking night. Move them earlier or mark as conflict.
+   - "social / drinks / hangout / friends" at night (describe it in plain English as a social event or drinks; never use the words inuman or barkada): timer (focus/study) habits MUST be placed BEFORE the event start time — NEVER after the event ends, because the student cannot focus after a social/drinking night. Move them earlier or mark as conflict.
    - "study / surprise quiz review": prioritize study, make habit sessions lighter.
 3. Replan ONLY the rest of today from ${currentTime} onwards.
 4. Strict 5-minute grid. No overlaps with fixed blocks, the new event, or sleep (before ${wakeTime} or after ${sleepTime}).
@@ -429,7 +429,7 @@ MISSION:
   try {
     const ai = getGeminiClient();
 
-    let response = await ai.models.generateContent({
+    let response = await generateWithRetry(ai, {
       model: GEMINI_MODEL,
       contents: [{ text: replanPrompt }],
       config: {
@@ -469,7 +469,7 @@ Please fix all collisions and constraints. Reminder:
 ${isSocialNight ? '- This is a social/drinking night event: DO NOT place focus/timer habits AFTER the event ends. Move them before the event or mark as conflict.' : ''}
         `.trim();
 
-        response = await ai.models.generateContent({
+        response = await generateWithRetry(ai, {
           model: GEMINI_MODEL,
           contents: [{ text: replanPrompt }, { text: retryPrompt }],
           config: {
@@ -504,12 +504,12 @@ ${isSocialNight ? '- This is a social/drinking night event: DO NOT place focus/t
           return {
             habitId: u.habitId,
             habitTitle: h?.title || 'Habit',
-            reason: 'Sumikip ang oras dahil sa biglang lakad.',
+            reason: 'No room after the new event.',
             canSqueeze: h?.type === 'timer' || h?.type === 'count',
             minMinutes: 15,
           };
         }),
-        summary: 'Na-replan ang araw mo gamit ang fallback mode (validated).',
+        summary: 'Replanned with the fallback planner.',
         plannedBy: 'fallback',
       });
     }
@@ -541,7 +541,7 @@ ${isSocialNight ? '- This is a social/drinking night event: DO NOT place focus/t
       start: detectedStart,
       end: detectedEnd,
       type: isNightSocial ? 'social' : 'other',
-      notes: isNightSocial ? 'Social / inuman: Inilipat ang focus habits bago magsimula.' : undefined,
+      notes: isNightSocial ? 'Social event: focus habits moved earlier.' : undefined,
     },
     blocks: fallback.blocks,
     conflicts: fallback.unplaced.map((u) => {
@@ -549,12 +549,12 @@ ${isSocialNight ? '- This is a social/drinking night event: DO NOT place focus/t
       return {
         habitId: u.habitId,
         habitTitle: h?.title || 'Habit',
-        reason: 'Sumikip ang oras dahil sa biglang lakad.',
+        reason: 'No room after the new event.',
         canSqueeze: h?.type === 'timer' || h?.type === 'count',
         minMinutes: 15,
       };
     }),
-    summary: 'Na-replan ang araw mo gamit ang fallback mode para sa biglang lakad.',
+    summary: 'Replanned with the fallback planner.',
     plannedBy: 'fallback',
   });
 });
