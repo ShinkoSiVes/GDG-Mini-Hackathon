@@ -1,88 +1,91 @@
-# Singit
+# 🥭 Singit
 
-**Singit squeezes your daily habits into whatever's left of your day.** You give it your class
-schedule, and Gemini plans your habits around it. When something comes up, it replans the rest
-of your day. ("Isingit" is Filipino for squeezing something in.)
+> **"Isingit ang daily habits sa siksik mong araw."**  
+> A mobile-first web app that squeezes daily habits into whatever is left of a Filipino college student's day, using Gemini to read schedules, plan habits around them, and dynamically replan when life happens.
 
-Built in one night for the **DevFest Manila 2026 After Hours Mini Hackathon** (#GeminiPromptMaxxing),
-with one master prompt in Google Antigravity, and deployed on Google Cloud.
+Built for **DevFest Manila 2026 After Hours** (`#GeminiPromptMaxxing`) from one master prompt in
+Google Antigravity, and deployed on Google Cloud Run.
 
 - **Live app:** _pending deploy_
 - **Demo video:** _pending_
-- **Master prompt:** [`PROMPT.md`](PROMPT.md)
+- **Master prompt and fix prompts:** [`PROMPT.md`](PROMPT.md)
 - **How it was built:** [`docs/PROCESS.md`](docs/PROCESS.md)
 
-## The problem
+---
 
-Habit apps give you checkboxes and fixed reminders. The hard part is working out *when* each habit
-fits into a day that keeps changing: classes, a surprise quiz, a barkada hangout that suddenly shows
-up at 7pm. Singit lets Gemini do that scheduling, while you keep the final say.
+## ⚡ The Wow Moment (Under 10 Seconds)
+- **1-Tap Demo**: Tap **"Subukan Agad: Load Sample Day"** to immediately preview a realistic Filipino student schedule (CS 101, Math 53, Lab) with a ready-made plan, clearly labelled as a sample day, with no setup.
+- **10-Second Test**: Tap **"⚡ May Biglang Lakad?"** -> select *"🍻 Barkada hangout 7–10pm, inuman"* -> watch Gemini replan the day, moving focus habits earlier and offering to squeeze or skip conflicting habits!
 
-## What it does
+---
 
-**Flow A: Plan today**
-1. Upload a screenshot of your class schedule, or type it in. Gemini reads it into editable time blocks.
-2. Answer a 5-question quiz: wake and sleep times, your habits, preferred times, your energy, and your commitment.
-3. Gemini places each habit in a free slot and gives a one-line reason for each one.
-4. Track habits on the Today timeline, each in its own way:
-   - **count** ("3 chess puzzles"): tap +1
-   - **timer** ("2 hours coding"): a built-in pomodoro
-   - **check** ("Duolingo lesson"): one tap
+## 🎯 Key Features
 
-   Each habit also keeps a daily streak.
+### Flow A: Set Up & Plan Today (Under 60s)
+1. **Schedule Ingestion**: Upload a photo/screenshot of your school registration / portal schedule (or type as plain text). Gemini extracts fixed class blocks with structured JSON on a 5-minute grid.
+2. **5-Question Quiz**:
+   - Wake & sleep times
+   - Habits with target types: **count** (e.g., 3 chess puzzles), **timer** (Pomodoro 25/5), or **check** (Duolingo)
+   - Preferred time of day for each habit
+   - Energy peak (Morning 🌅, Afternoon ☀️, Evening 🌆, Night 🌙)
+   - Commitment level (1–5)
+3. **Gemini Habit Squeezer**: Squeezes habits into free slots respecting energy and classes. Validated on the server (5-min grid, no collisions, wake/sleep bounds) with deterministic fallback resilience.
+4. **Interactive Timeline**:
+   - Count: `+1 Tap` toward target
+   - Timer: Built-in 25/5 Pomodoro with focus sprint and break timer
+   - Check: Single tap completion
+   - Daily streaks per habit + overall streak flame!
 
-**Flow B: Something came up**
-- Type something like *"barkada hangout 7–10pm, inuman"*, and Gemini replans the rest of today.
-- The kind of event matters to the plan.
-- If a habit no longer fits, you choose: **Squeeze**, **Skip today**, or **Remove**.
-- Nothing changes until you confirm.
+### Flow B: "Something Came Up" (Dynamic Replanning)
+- Type surprise events (e.g., *"barkada hangout 7-10pm, inuman"* or *"surprise quiz tomorrow, need to review tonight"*).
+- Gemini interprets event type:
+  - **Late social / inuman**: shifts focus habits earlier before the event starts.
+  - **Study review**: lightens or reschedules conflicting habits.
+- Before/after diff preview with reasons.
+- Conflict options: **Squeeze** (shorter 15m session), **Skip today**, or **Remove from today**.
+- Animate timeline reshuffling on apply!
 
-**Reminders without sign-in**
-- Export today's plan as an `.ics` file with alarms. It imports into Google Calendar or your phone in one tap.
-- Each habit card also has an "Add to Google Calendar" link.
+### Reminders Without Sign-In
+- **"Send to my calendar"**: Exports today's plan as an `.ics` file with `VALARM` 10 minutes before each event in `Asia/Manila` timezone.
+- **"Add to Google Calendar"**: Direct prefilled Google Calendar link per habit card.
+- **Privacy First**: All schedules and habits reside in browser `localStorage`. No database, no tracking.
 
-## How Gemini is used
+---
 
-- **Reading the schedule image:** Gemini turns a screenshot of a class schedule into structured time blocks.
-- **Structured output:** schedule extraction, planning and replanning all return JSON that matches a defined schema.
-- **Validated on the server:** every plan is checked for overlaps, wake/sleep bounds and the 5-minute grid. An invalid plan is retried once with the errors included. If it's still invalid, a deterministic **fallback planner** takes over, and the UI shows a "Planned by Gemini" or "Fallback planner" badge.
-- **Vertex AI in production:** on Cloud Run, Gemini runs through the service account, so there's no API key in production.
+## 🛠️ Stack & Architecture
+- **Backend**: Single Node 20 Express server serving built frontend and `/api/*` routes.
+- **AI**: Official `@google/genai` SDK with structured output (`responseSchema`) and server-side collision validation.
+  - Cloud Run (Production): Vertex AI via service account (`GOOGLE_GENAI_USE_VERTEXAI=true`, `GOOGLE_CLOUD_PROJECT=devfest-afterhours`, `GOOGLE_CLOUD_LOCATION=global`).
+  - Local: `GEMINI_API_KEY` from gitignored `.env`.
+  - Model: `gemini-2.5-flash` by default, overridable with `GEMINI_MODEL`.
+  - Fallbacks: an invalid plan is retried once with the validation errors, then a deterministic fallback planner takes over. The UI badge shows whether Gemini or the fallback made the plan.
+- **Safety**: per-IP rate limit on `/api/*` (with `trust proxy` for Cloud Run) and a 5 MB upload limit.
+- **Frontend**: Vite + React 19 + TypeScript + Tailwind CSS + Lucide Icons + Canvas Confetti.
+- **Production Container**: Multi-stage `Dockerfile` (node:20-slim) with health route `/healthz`.
 
-## Privacy
+---
 
-Your schedule, habits and streaks stay in your browser (localStorage). The server stores nothing.
-The API is rate-limited per IP, and uploads are capped at 5 MB.
-
-## Tech stack
-
-| Layer | Tech |
-|---|---|
-| Frontend | React 19, Vite, Tailwind CSS, lucide-react |
-| Backend | Node 20, Express, multer, express-rate-limit |
-| AI | `@google/genai`, using Gemini on Vertex AI (production) or a Gemini API key (local) |
-| Hosting | Google Cloud Run (`asia-southeast1`), built with Cloud Build |
-| Built with | Google Antigravity, from one master prompt plus steering rules |
-
-## Run locally
-
-Requirements: Node 20+.
+## 🚀 Running Locally
 
 ```bash
+# 1. Install dependencies
 npm install
-# create .env with your own key (never commit it):
-#   GEMINI_API_KEY=your-key
-npm run dev          # client on http://localhost:5173, API on http://localhost:8080
-```
 
-Production build:
+# 2. Add your Gemini API key in .env
+echo "GEMINI_API_KEY=your_key_here" > .env
 
-```bash
+# 3. Build client and server
 npm run build
-npm start            # serves the built app on http://localhost:8080
+
+# 4. Start production server
+npm start
+# Server runs on http://localhost:8080 (serves API and UI)
+
+# Or run dev mode with live reload:
+npm run dev
 ```
 
-Without `GEMINI_API_KEY`, the server uses Vertex AI (and needs Google Cloud credentials). Try
-**"Load sample day"** to see a ready-made plan.
+Never commit `.env`. It's gitignored.
 
 ### Environment variables
 
@@ -92,10 +95,23 @@ Without `GEMINI_API_KEY`, the server uses Vertex AI (and needs Google Cloud cred
 | `GOOGLE_GENAI_USE_VERTEXAI` | Use Vertex AI (set on Cloud Run) | `false` |
 | `GOOGLE_CLOUD_PROJECT` | GCP project for Vertex AI | `devfest-afterhours` |
 | `GOOGLE_CLOUD_LOCATION` | Vertex AI location | `global` |
-| `GEMINI_MODEL` | Model name | `gemini-2.5-flash` |
+| `GEMINI_MODEL` | Gemini model name | `gemini-2.5-flash` |
 | `PORT` | Server port | `8080` |
 
-## Deploy to Cloud Run
+### API
+
+| Route | Purpose |
+|---|---|
+| `GET /healthz` | Health check |
+| `POST /api/schedule/extract` | Schedule image or text in, fixed class blocks out |
+| `POST /api/plan` | Plan today's habits around the schedule |
+| `POST /api/replan` | Replan the rest of today after something comes up |
+
+---
+
+## ☁️ Deploying to Cloud Run
+
+Deploy directly using Google Cloud SDK:
 
 ```bash
 gcloud run deploy devfest-app \
@@ -105,33 +121,26 @@ gcloud run deploy devfest-app \
   --allow-unauthenticated \
   --min-instances 0 --max-instances 2 \
   --memory 512Mi --cpu 1 \
-  --set-env-vars GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=devfest-afterhours,GOOGLE_CLOUD_LOCATION=global
+  --set-env-vars GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=devfest-afterhours,GOOGLE_CLOUD_LOCATION=global,GEMINI_MODEL=gemini-2.5-flash
 ```
 
 The full steps, including the Vertex AI permission fix, are in [`.agents/workflows/deploy.md`](.agents/workflows/deploy.md).
 
-## API
+---
 
-| Route | Purpose |
-|---|---|
-| `GET /healthz` | Health check |
-| `POST /api/schedule/extract` | Schedule image or text in, fixed blocks out |
-| `POST /api/plan` | Plan today's habits around the schedule |
-| `POST /api/replan` | Replan the rest of today after something comes up |
-
-## How this was built
+## 🧭 How This Was Built
 
 This repo was steered rather than hand-coded. Antigravity read these files before writing any code:
 
 - [`AGENTS.md`](AGENTS.md): read the rules first; `PROMPT.md` is the spec
 - [`.agents/rules/`](.agents/rules): context and scope, stack and Google Cloud, UI and quality
 - [`.agents/workflows/deploy.md`](.agents/workflows/deploy.md): the Cloud Run deploy steps
-- [`PROMPT.md`](PROMPT.md): the one master prompt, plus a log of follow-up fix prompts
+- [`PROMPT.md`](PROMPT.md): the one master prompt, plus a log of follow-up fix prompts from QA
 
-The full story, from requirements through Cloud setup, idea testing, the prompt and the deploy, is in
-[`docs/PROCESS.md`](docs/PROCESS.md).
+The full story is in [`docs/PROCESS.md`](docs/PROCESS.md): requirements, Google Cloud setup, idea
+testing and scoring, the prompt, QA and the deploy.
 
-## Roadmap
+## 🗺️ Roadmap
 
 - Suggestions for new daily skills to try, with fun ratings
 - A weekly review that swaps or adjusts habit targets

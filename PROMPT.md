@@ -89,4 +89,21 @@ Build **Singit**, a mobile-first web app that squeezes your daily habits into wh
 
 ## Follow-up prompts log
 
-(Any fix prompts sent after the master prompt, in order.)
+### Fix prompt 1: after local QA (2026-11-22, ~00:48)
+
+Local QA ran the build, the API (plan, replan, extract), the UI in Chrome, and phone widths of 390 and 360 px. Item 9 (typography) came from a separate font review and was sent as a short follow-up message right after items 1–8.
+
+```
+QA found these issues. Fix all of them, keep everything else unchanged, then run typecheck, build, and walk both flows once.
+
+1. Schedule extraction drops classes: typed "MWF 9:00-12:00 CS 101 Lecture; TTh 13:00-14:30 Math 53; F 15:00-17:00 CS 101 Lab" returned only CS 101. Extraction must return EVERY class on EVERY listed day (expand MWF/TTh/etc. into one block per day). Planning must then use only today's day blocks (Asia/Manila), and the editable table should show today's blocks first.
+2. Add app.set('trust proxy', 1) in the Express server so the per-IP rate limit works behind Cloud Run.
+3. Sample day must be honest: show a visible "Sample day" badge instead of "Planned by Gemini", set plannedBy to 'sample', and label the sample streaks as sample data.
+4. Validate /api/replan output with the same validatePlan rules (no overlap with fixed blocks or the new event, wake/sleep bounds, 5-min grid), retry once with errors, then fall back. Enforce in the replan prompt: for late social/drinking events, never place focus habits (timer habits) after the event; move them earlier or offer Squeeze/Skip.
+5. Use one model name everywhere: default GEMINI_MODEL = 'gemini-2.5-flash' in code, footer, and README (the deploy sets GEMINI_MODEL explicitly).
+6. Fix the TypeScript error in src/client/components/Timeline.tsx line 39 (TimelineItem union type).
+7. Replan should start from the real current time; only the sample day uses 14:00, and the modal must say which.
+8. At 360px width, keep the header "Load Sample Day" button on one line (shorter label or icon-only on small screens).
+9. Typography: add Bricolage Grotesque (700, 800) to the existing Google Fonts link in index.html (keep Plus Jakarta Sans and JetBrains Mono, display=swap). Add `display: ['Bricolage Grotesque', 'Plus Jakarta Sans', 'sans-serif']` to tailwind.config.js fontFamily and apply `font-display tracking-tight` to the hero headline, section titles and habit card titles. Add `tabular-nums` to every time range, counter and the pomodoro timer. Do not change colors, sizes or layout.
+Do not modify README.md, PROMPT.md, AGENTS.md, docs/, or .agents/.
+```

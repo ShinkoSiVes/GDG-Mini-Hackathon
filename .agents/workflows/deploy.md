@@ -19,7 +19,7 @@ Vertex AI APIs are already enabled.
      --allow-unauthenticated \
      --min-instances 0 --max-instances 2 \
      --memory 512Mi --cpu 1 \
-     --set-env-vars GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=devfest-afterhours,GOOGLE_CLOUD_LOCATION=global
+     --set-env-vars GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=devfest-afterhours,GOOGLE_CLOUD_LOCATION=global,GEMINI_MODEL=gemini-2.5-flash
    ```
 
 4. If Gemini calls fail with a permission error, grant the runtime service account Vertex access:

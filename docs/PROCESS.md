@@ -61,7 +61,31 @@ Follow-up fix prompts are logged at the bottom of `PROMPT.md`.
 
 ## 6. Build log
 
-- 2026-11-22: first Antigravity build from the master prompt (Vite + React + Tailwind frontend, Node server, Dockerfile).
+- 2026-11-22 ~00:25: first Antigravity build from the master prompt (Vite + React + Tailwind frontend, Express server, Dockerfile).
+- 2026-11-22 ~00:38: Antigravity's own pass. It benchmarked models, switched the default model, and rewrote the README.
+
+## 6a. Local QA (2026-11-22, ~00:45)
+
+**Passed**
+- Production build and `/healthz`.
+- `/api/plan` returned a valid Gemini plan in **1.9 s**: no clashes, morning and evening placement, Taglish reasons.
+- Flow B in the UI: it detected the inuman event (7–10pm), moved coding earlier, and showed the before/after diff, Squeeze/Skip/Remove, and a confirm step before applying.
+- Counters, timeline updates and friendly input errors worked, with no browser console errors.
+- At 390 and 360 px wide, no horizontal scroll.
+- The `.ics` export has a 10-minute VALARM and the Asia/Manila timezone (checked in code).
+
+**Found and sent to Antigravity as fix prompt 1** (see `PROMPT.md`)
+- Schedule extraction dropped classes (1 of 3 returned).
+- Missing `trust proxy` for Cloud Run rate limiting.
+- The sample day was shown as "Planned by Gemini", with unlabelled streaks.
+- `/api/replan` wasn't validated. One API run put a focus habit after a drinking event.
+- Model names were inconsistent across code, footer and README.
+- One TypeScript error.
+- Replan always started from 14:00.
+- The header button wrapped at 360 px.
+- Typography: added a display font for headings and tabular numbers.
+
+**Not yet tested:** reading a real schedule screenshot, importing the `.ics` into Google Calendar, a full pomodoro run.
 
 ## 7. Deploy
 
