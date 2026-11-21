@@ -100,10 +100,24 @@ QA found these issues. Fix all of them, keep everything else unchanged, then run
 2. Add app.set('trust proxy', 1) in the Express server so the per-IP rate limit works behind Cloud Run.
 3. Sample day must be honest: show a visible "Sample day" badge instead of "Planned by Gemini", set plannedBy to 'sample', and label the sample streaks as sample data.
 4. Validate /api/replan output with the same validatePlan rules (no overlap with fixed blocks or the new event, wake/sleep bounds, 5-min grid), retry once with errors, then fall back. Enforce in the replan prompt: for late social/drinking events, never place focus habits (timer habits) after the event; move them earlier or offer Squeeze/Skip.
-5. Use one model name everywhere: default GEMINI_MODEL = 'gemini-2.5-flash' in code, footer, and README (the deploy sets GEMINI_MODEL explicitly).
+5. Use one model name everywhere: default GEMINI_MODEL = 'gemini-2.5-flash' in code, footer, and README (the deploy sets GEMINI_MODEL explicitly). (This turned out wrong: that model is rejected by the API. See fix prompt 2.)
 6. Fix the TypeScript error in src/client/components/Timeline.tsx line 39 (TimelineItem union type).
 7. Replan should start from the real current time; only the sample day uses 14:00, and the modal must say which.
 8. At 360px width, keep the header "Load Sample Day" button on one line (shorter label or icon-only on small screens).
 9. Typography: add Bricolage Grotesque (700, 800) to the existing Google Fonts link in index.html (keep Plus Jakarta Sans and JetBrains Mono, display=swap). Add `display: ['Bricolage Grotesque', 'Plus Jakarta Sans', 'sans-serif']` to tailwind.config.js fontFamily and apply `font-display tracking-tight` to the hero headline, section titles and habit card titles. Add `tabular-nums` to every time range, counter and the pomodoro timer. Do not change colors, sizes or layout.
 Do not modify README.md, PROMPT.md, AGENTS.md, docs/, or .agents/.
+```
+
+### Fix prompt 2: after re-QA (2026-11-22, ~01:05)
+
+Re-QA showed that `gemini-2.5-flash` returns 404 ("no longer available to new users"), which silently put every call into fallback mode. `gemini-3.5-flash-lite` works, and `gemini-3.8-flash` returned 503 high demand. Schedule extraction also still dropped classes.
+
+```
+Fix prompt 2 (from re-QA):
+1. Model: Google rejects gemini-2.5-flash ("no longer available to new users"). Set the default GEMINI_MODEL to 'gemini-3.5-flash-lite' in src/server/gemini.ts, and make the footer text say "Gemini 3.5 Flash-Lite" (no model id in parentheses). Keep GEMINI_MODEL overridable by env.
+2. Schedule extraction still drops classes. Input "MWF 9:00-12:00 CS 101 Lecture; TTh 13:00-14:30 Math 53; F 15:00-17:00 CS 101 Lab" returns only the 3 CS 101 Lecture blocks. Make it robust in code, not just in the prompt:
+   a. Split the pasted text into separate entries on ";" and newlines, and extract each entry in its own Gemini call (run them in parallel, merge, de-duplicate by day+start+end+title).
+   b. For images, after extraction count the distinct time ranges visible and, if fewer blocks come back than expected, retry once asking only for the missing ones.
+   c. If any entry fails, keep the entries that worked and show which one failed in the editable table instead of dropping everything.
+3. Do not modify README.md, PROMPT.md, AGENTS.md, docs/, or .agents/. Run typecheck and build when done, but do not start servers or run your own QA.
 ```

@@ -96,3 +96,10 @@ Pending: Cloud Run in `asia-southeast1`, deployed from Cloud Shell.
 - Deployed link: pending
 - YouTube video: pending
 - LinkedIn post: pending
+
+## 6b. Re-QA (2026-11-22, ~01:00)
+
+- Typecheck clean. `trust proxy` and replan validation confirmed in the code and in 3 repeated replan runs.
+- **Mistake caught:** fix prompt 1 set the default model to `gemini-2.5-flash`, which the API rejects, so every call silently fell back to the planner. `gemini-3.5-flash-lite` works, and `gemini-3.8-flash` returned 503 high demand.
+- Schedule extraction still returned only 1 of 3 classes, so fix prompt 2 (see `PROMPT.md`) makes it robust in code.
+- Still to verify: Vertex AI model availability in production, a real schedule screenshot, `.ics` import.

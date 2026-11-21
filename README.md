@@ -57,7 +57,7 @@ Google Antigravity, and deployed on Google Cloud Run.
 - **AI**: Official `@google/genai` SDK with structured output (`responseSchema`) and server-side collision validation.
   - Cloud Run (Production): Vertex AI via service account (`GOOGLE_GENAI_USE_VERTEXAI=true`, `GOOGLE_CLOUD_PROJECT=devfest-afterhours`, `GOOGLE_CLOUD_LOCATION=global`).
   - Local: `GEMINI_API_KEY` from gitignored `.env`.
-  - Model: `gemini-2.5-flash` by default, overridable with `GEMINI_MODEL`.
+  - Model: `gemini-3.5-flash-lite` by default, overridable with `GEMINI_MODEL`.
   - Fallbacks: an invalid plan is retried once with the validation errors, then a deterministic fallback planner takes over. The UI badge shows whether Gemini or the fallback made the plan.
 - **Safety**: per-IP rate limit on `/api/*` (with `trust proxy` for Cloud Run) and a 5 MB upload limit.
 - **Frontend**: Vite + React 19 + TypeScript + Tailwind CSS + Lucide Icons + Canvas Confetti.
@@ -95,7 +95,7 @@ Never commit `.env`. It's gitignored.
 | `GOOGLE_GENAI_USE_VERTEXAI` | Use Vertex AI (set on Cloud Run) | `false` |
 | `GOOGLE_CLOUD_PROJECT` | GCP project for Vertex AI | `devfest-afterhours` |
 | `GOOGLE_CLOUD_LOCATION` | Vertex AI location | `global` |
-| `GEMINI_MODEL` | Gemini model name | `gemini-2.5-flash` |
+| `GEMINI_MODEL` | Gemini model name | `gemini-3.5-flash-lite` |
 | `PORT` | Server port | `8080` |
 
 ### API
@@ -121,7 +121,7 @@ gcloud run deploy devfest-app \
   --allow-unauthenticated \
   --min-instances 0 --max-instances 2 \
   --memory 512Mi --cpu 1 \
-  --set-env-vars GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=devfest-afterhours,GOOGLE_CLOUD_LOCATION=global,GEMINI_MODEL=gemini-2.5-flash
+  --set-env-vars GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=devfest-afterhours,GOOGLE_CLOUD_LOCATION=global,GEMINI_MODEL=gemini-3.5-flash-lite
 ```
 
 The full steps, including the Vertex AI permission fix, are in [`.agents/workflows/deploy.md`](.agents/workflows/deploy.md).
