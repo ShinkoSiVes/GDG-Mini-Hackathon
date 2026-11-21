@@ -68,7 +68,7 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
           onClick={onClose}
           className="text-xs text-ink-muted hover:text-ink font-semibold"
         >
-          Isara
+          Close
         </button>
       </div>
 

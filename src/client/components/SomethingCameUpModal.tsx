@@ -28,6 +28,12 @@ interface SomethingCameUpModalProps {
   onClose: () => void;
 }
 
+// A proposed block counts as moved only if its time differs from the current plan
+const isMoved = (plan: { habitId: string; start: string; end: string }[], b: { habitId: string; start: string; end: string }) => {
+  const orig = plan.find((p) => p.habitId === b.habitId);
+  return !orig || orig.start !== b.start || orig.end !== b.end;
+};
+
 export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
   currentTime,
   isSampleTime,
@@ -303,20 +309,26 @@ export const SomethingCameUpModal: React.FC<SomethingCameUpModalProps> = ({
             )}
 
             {/* AI Summary note */}
-            {summary && (
+            {summary && (conflicts.length > 0 || proposedBlocks.some((b) => isMoved(currentPlan, b))) && (
               <div className="p-3 bg-mango-light border border-mango rounded-2xl text-xs text-ink font-semibold">
                 💡 {summary}
               </div>
             )}
 
+            {detectedEvent && conflicts.length === 0 && !proposedBlocks.some((b) => isMoved(currentPlan, b)) && (
+              <div className="p-3 bg-paper-100 border border-paper-300 rounded-2xl text-xs text-ink font-semibold">
+                ✅ Your plan already works around this. Nothing needs to move.
+              </div>
+            )}
+
             {/* If habits shift cleanly */}
-            {proposedBlocks.length > 0 && (
+            {proposedBlocks.some((b) => isMoved(currentPlan, b)) && (
               <div>
                 <span className="text-xs font-bold text-ink block mb-2">
-                  Moved habits ({proposedBlocks.length}):
+                  Moved habits ({proposedBlocks.filter((b) => isMoved(currentPlan, b)).length}):
                 </span>
                 <div className="flex flex-col gap-2">
-                  {proposedBlocks.map((b) => {
+                  {proposedBlocks.filter((b) => isMoved(currentPlan, b)).map((b) => {
                     const habit = habits.find((h) => h.id === b.habitId);
                     const orig = currentPlan.find((p) => p.habitId === b.habitId);
                     return (
