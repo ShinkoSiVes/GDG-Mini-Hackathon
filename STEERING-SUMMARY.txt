@@ -1,0 +1,53 @@
+SINGIT - HOW THE STEERING WAS BUILT
+===================================
+
+1. REQUIREMENTS FIRST
+---------------------
+- Read the submission form: the prompt itself, a deployed link, a YouTube
+  video and a LinkedIn post are all judged.
+- Set up Google Cloud before building:
+    - created project devfest-afterhours and linked the event credits
+    - enabled Cloud Run, Cloud Build, Artifact Registry and Vertex AI
+    - added budget alerts plus a $4 spending cap
+
+2. STEERING FILES (Antigravity reads these on every run)
+--------------------------------------------------------
+devfest-after-hours/
+|- AGENTS.md                      read the rules first; PROMPT.md is the spec
+|- .agents/rules/
+|  |- 00-context.md               one-night scope, wow in 10s,
+|  |                              Gemini is the core
+|  |- 10-stack-and-gcp.md         Node + Express, Gemini server-side,
+|  |                              Vertex AI on Cloud Run (no API keys),
+|  |                              PORT, Dockerfile, /healthz, rate limit
+|  |- 20-ui-and-quality.md        mobile-first, not a template,
+|                                 loading/empty/error states,
+|                                 test before "done"
+|- .agents/workflows/deploy.md    exact Cloud Run command, max 2 instances
+|- PROMPT.md                      the master prompt
+
+3. IDEA, TESTED BEFORE BUILDING
+-------------------------------
+- The idea was grilled question by question: the problem, Gemini's role,
+  alarms, accuracy, and who wouldn't want it.
+- It was scored like a judge would: 53 -> 55 -> about 73 after fixes.
+- The fixes that went in:
+    - a fallback planner and a "Load sample day" button, so the demo
+      can't break
+    - Gemini reading a screenshot of my class schedule
+    - calendar alarms through an .ics export, with no sign-in
+    - only two flows, done completely
+    - schedule data kept on the device
+
+4. THE MASTER PROMPT
+--------------------
+- who it's for
+- Flow A: screenshot + 5-question quiz -> today's plan with counters,
+  timers and streaks
+- Flow B: "Something came up" -> Gemini replans, then asks whether to
+  skip, squeeze or remove
+- Gemini returns structured JSON, the server validates it, retries once,
+  then falls back to the planner
+- privacy, look and feel, Taglish microcopy
+- deploys to Cloud Run on Google Cloud
+- a "done means" checklist
