@@ -483,8 +483,34 @@ ${isSocialNight ? '- This is a social/drinking night event: DO NOT place focus/t
       }
 
       if (parsed.detectedEvent && validation.valid) {
+        // Sanity check: a conflict only stands if the habit's original slot overlaps the new event.
+        // Otherwise (or if that slot is already past) the habit stays exactly as planned.
+        const eventStart = timeToMinutes(parsed.detectedEvent.start);
+        const eventEnd = timeToMinutes(parsed.detectedEvent.end);
+        const nowMinutes = timeToMinutes(currentTime);
+        const keptBlocks: any[] = [...(parsed.blocks || [])];
+        const realConflicts: any[] = [];
+
+        for (const c of parsed.conflicts || []) {
+          const orig = currentPlan.find((p) => p.habitId === c.habitId);
+          if (orig) {
+            const origStart = timeToMinutes(orig.start);
+            const origEnd = timeToMinutes(orig.end);
+            const hitByEvent = origStart < eventEnd && eventStart < origEnd;
+            if (!hitByEvent || origStart < nowMinutes) {
+              if (!keptBlocks.some((b) => b.habitId === c.habitId)) {
+                keptBlocks.push({ habitId: c.habitId, start: orig.start, end: orig.end, reason: 'No change needed.' });
+              }
+              continue;
+            }
+          }
+          realConflicts.push(c);
+        }
+
         return res.json({
           ...parsed,
+          blocks: keptBlocks,
+          conflicts: realConflicts,
           plannedBy: 'gemini',
         });
       }
