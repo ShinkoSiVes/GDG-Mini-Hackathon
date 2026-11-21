@@ -19,14 +19,7 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
   const [textSchedule, setTextSchedule] = useState<string>('');
   const [isExtracting, setIsExtracting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [blocks, setBlocks] = useState<FixedBlock[]>(
-    initialBlocks.length > 0
-      ? initialBlocks
-      : [
-          { id: 'fb-1', day: 'Today', start: '08:30', end: '10:00', title: 'CS 101 Lecture' },
-          { id: 'fb-2', day: 'Today', start: '13:00', end: '14:30', title: 'Math 53 Discussion' },
-        ]
-  );
+  const [blocks, setBlocks] = useState<FixedBlock[]>(initialBlocks);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -46,6 +39,10 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
   };
 
   const handleExtract = async () => {
+    if (!(mode === 'upload' && file) && !textSchedule.trim()) {
+      setErrorMsg('Type your schedule first.');
+      return;
+    }
     setIsExtracting(true);
     setErrorMsg(null);
 
@@ -63,9 +60,7 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            text:
-              textSchedule ||
-              'CS 101 Lecture MWF 8:30am - 10:00am, Math 53 TTH 1:00pm - 2:30pm, CS 101 Lab F 3:00pm - 5:00pm',
+            text: textSchedule,
           }),
         });
       }
@@ -75,9 +70,8 @@ export const ScheduleInputModal: React.FC<ScheduleInputModalProps> = ({
         // Server already sorts today-first; keep the order
         setBlocks(data.fixedBlocks);
         if (data.notes && /read/i.test(data.notes)) setErrorMsg(data.notes);
-      } else if (data.fallbackBlocks) {
-        setBlocks(data.fallbackBlocks);
-        setErrorMsg(data.error || 'Could not read the schedule. Edit the table below.');
+      } else {
+        setErrorMsg(data.error || 'Could not read the schedule. Add your classes below.');
       }
     } catch (err: any) {
       console.error('Extract error:', err);

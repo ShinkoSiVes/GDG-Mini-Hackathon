@@ -250,11 +250,7 @@ CRITICAL RULES:
   } catch (error: any) {
     console.error('Schedule extraction error:', error?.message || error);
     return res.status(500).json({
-      error: 'Could not read the schedule. Type or edit your classes manually.',
-      fallbackBlocks: [
-        { id: `fb-1`, day: 'Today', start: '08:30', end: '10:00', title: 'CS 101 Lecture' },
-        { id: `fb-2`, day: 'Today', start: '13:00', end: '15:00', title: 'Math 53 Discussion' },
-      ],
+      error: 'Could not read the schedule. Add your classes manually.',
     });
   }
 });

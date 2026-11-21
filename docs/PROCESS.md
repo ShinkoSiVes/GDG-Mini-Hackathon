@@ -120,3 +120,10 @@ With Antigravity credits nearly used up, the remaining fixes were made directly 
 - QA caught a temporary Gemini 503 ("high demand") dropping a class during extraction. Added retries for temporary errors, and the UI now names any entry it couldn't read.
 - A parallel stress test of 15 extraction calls hit the 429 quota on the free local API key. That is a local-key limit, not an app bug. The deployed app uses Vertex AI.
 - Typecheck and build clean. Plan, replan and extraction verified in plain English; Flow A, the quiz and the replan dialog verified in the browser.
+
+## 6e. Rehearsal fixes (2026-11-22, ~02:55)
+
+Rehearsing on the live app from a clean browser caught three more issues, all fixed and redeployed:
+- The schedule setup pre-filled two example classes, and a failed extraction silently inserted two fake classes. A plan could then be built on classes the user never entered. The list now starts empty and failures only show an error.
+- The replan dialog listed habits as "moved" when their times hadn't changed, and the summary claimed a move that didn't happen. It now lists only habits that moved, and says "Nothing needs to move" when none do.
+- A leftover non-English label on the pomodoro timer was translated.

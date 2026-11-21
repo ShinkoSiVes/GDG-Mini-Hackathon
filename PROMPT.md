@@ -132,3 +132,5 @@ The master prompt asked for light Taglish microcopy. After reviewing the demo, t
 - Gemini's reasons and summaries are instructed to be short, direct English (12 words or fewer for habit reasons).
 - Streaks start at 0 for a new user. The old defaults (3, 5 and 12 days) and the automatic "+1" when a plan is created were removed. A habit's streak badge is hidden until it is above 0, and the sample day's streaks are marked "(sample)".
 - Temporary Gemini errors (503 high demand, 429) are retried twice with a short wait before the app falls back. A schedule entry that still can't be read is named in the UI instead of silently dropped.
+- No invented data in setup: the class list starts empty (the app no longer pre-fills example classes), an empty text box asks for input instead of using a hidden example schedule, and a failed extraction shows an error instead of inserting fake classes.
+- The replan dialog lists only habits whose time actually changed, and says so when nothing needs to move.
